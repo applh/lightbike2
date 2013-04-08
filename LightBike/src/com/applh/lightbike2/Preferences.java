@@ -20,9 +20,9 @@
  * along with GL TRON.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.applh.lightbike;
+package com.applh.lightbike2;
 
-import com.applh.lightbike.R;
+import com.applh.lightbike2.R;
 
 import android.os.Bundle;
 import android.os.SystemClock;

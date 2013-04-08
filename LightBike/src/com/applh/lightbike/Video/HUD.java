@@ -28,7 +28,7 @@ import android.util.FloatMath;
 
 import com.applh.lightbike.Game.LightBikeGame;
 import com.applh.lightbike.fx.SetupGL;
-import com.applh.lightbike.OpenGLRenderer;
+import com.applh.lightbike2.OpenGLRenderer;
 
 public class HUD {
 	

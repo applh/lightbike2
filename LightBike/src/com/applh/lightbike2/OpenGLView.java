@@ -20,7 +20,7 @@
  *
  */
 
-package com.applh.lightbike;
+package com.applh.lightbike2;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;

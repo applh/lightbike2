@@ -7,7 +7,7 @@ package com.applh.lightbike.fx;
 import android.content.Context;
 import android.opengl.GLES11;
 
-import com.applh.lightbike.R;
+import com.applh.lightbike2.R;
 import com.applh.lightbike.Video.GLTexture;
 
 public class GraphicSet {
