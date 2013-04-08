@@ -332,7 +332,7 @@ public class Camera {
 						_steadyCount = 0;
 						Random rand = new Random();
 						if (_deltaR > 0)
-							_steadyCountMax = 50 + rand.nextInt(200);
+							_steadyCountMax = 500 + rand.nextInt(200);
 						else 
 							_steadyCountMax = 50 + rand.nextInt(100);
 					}					
