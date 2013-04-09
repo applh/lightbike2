@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <PreferenceCategory
+        android:title="Player Options"
+        android:key="first_category">
+    
+		<ListPreference    android:title="Bike Color"
+		                   android:summary="Select the Color of your Bike"
+		                   android:key="playerBike"
+		                   android:defaultValue="2"
+		                   android:entries="@array/bikeArray"
+		                   android:entryValues="@array/playerValues" />       
+	    
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="Music Options"
+		android:key="second_category">
+		
+		<CheckBoxPreference android:title="Music"
+							android:summary="Toggle Music on/off"
+		                    android:defaultValue="true"
+		                    android:key="musicOption" />
+	    	    					    
+	</PreferenceCategory>
+       
+	<PreferenceCategory
+		android:title="Game Options"
+		android:key="fourth_category">
+
+   		<ListPreference    android:title="Number of Bikes"
+                   android:summary="Selects the number of Bikes"
+                   android:key="playerNumber"
+                   android:defaultValue="6"
+                   android:entries="@array/playerNumEntries"
+                   android:entryValues="@array/playerNumValues" />
+	        		
+		<ListPreference    android:title="Grid Size"
+		                   android:summary="Select the size of the arena (changes won't take effect until a new game is started)"
+		                   android:key="arenaSize"
+		                   android:defaultValue="0"
+		                   android:entries="@array/arenaEntries"
+		                   android:entryValues="@array/arenaValues" />
+				
+		<ListPreference  android:title="Game Speed"
+		                 android:summary="Select the speed of the game (changes won't take effect until a new game is started)"
+		                 android:key="gameSpeed"
+		                 android:defaultValue="1"
+		                 android:entries="@array/gameSpeedEntries"
+		                 android:entryValues="@array/gameSpeedValues" />
+			
+	</PreferenceCategory>    
+</PreferenceScreen>

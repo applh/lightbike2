@@ -24,7 +24,7 @@ package com.applh.lightbike.Game;
 
 import java.util.HashMap;
 
-import com.applh.lightbike2.R;
+import com.applh.lightbike.R;
 
 
 import android.content.Context;

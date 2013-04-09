@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.applh.lightbike2"
-      android:versionCode="9"
-      android:versionName="2.09.c"
+      package="com.applh.lightbike"
+      android:versionCode="10"
+      android:versionName="3.04.a"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8" />
     
@@ -10,13 +10,13 @@
     <uses-feature android:glEsVersion="0x00010001" android:required="true" />
     
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name="com.applh.lightbike2.LightBike"
+        <activity android:name="com.applh.lightbike.LightBike"
                   android:label="@string/app_name" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity android:name="com.applh.lightbike2.Preferences" android:label="@string/preferences_title"></activity>
+		<activity android:name="com.applh.lightbike.Preferences" android:label="@string/preferences_title"></activity>
   </application>
 </manifest>

@@ -6,7 +6,7 @@
  */
 
 
-package com.applh.lightbike2;
+package com.applh.lightbike;
 
 
 import javax.microedition.khronos.egl.EGLConfig;

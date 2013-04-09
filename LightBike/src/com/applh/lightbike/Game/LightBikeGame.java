@@ -26,7 +26,7 @@ import android.opengl.GLES11;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
-import com.applh.lightbike2.R;
+import com.applh.lightbike.R;
 
 import com.applh.lightbike.Game.Camera.CamType;
 //import com.applh.lightbike.Sound.SoundManager;
@@ -36,7 +36,7 @@ import com.applh.lightbike.fx.Explosion;
 import com.applh.lightbike.fx.SetupGL;
 import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
-import com.applh.lightbike2.OpenGLRenderer;
+import com.applh.lightbike.OpenGLRenderer;
 
 
 public class LightBikeGame {
