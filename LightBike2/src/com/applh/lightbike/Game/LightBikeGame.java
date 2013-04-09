@@ -48,7 +48,7 @@ public class LightBikeGame {
 	
 	// Define arena setting 
 	private static float aGrideSize0 = 480.0f;
-	private static float aSpeed0 = 10.0f;
+	private float aSpeed0 = 10.0f;
 	private static int aColor0 = 2;
 
 	public static final int MAX_PLAYERS = 24;
@@ -111,6 +111,7 @@ public class LightBikeGame {
 
 	public boolean aActBoost = false;
 	public boolean aActBrake = false;
+	public boolean aActSpecial = false;
 	
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
@@ -404,18 +405,21 @@ public class LightBikeGame {
 		else if (isPlayActive) {
 			// GAME PLAY
 			// TURN LEFT OR RIGHT
-			if (x < (aVisual._iwidth * 2 / 5)) {
+			if (x < (aVisual._iwidth * 2/5)) {
 				inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
 				aIsProcessInput = true;
 			}
-			else if (x > (aVisual._iwidth * 3 / 5)) {
+			else if (x > (aVisual._iwidth * 3/5)) {
 				inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
 				aIsProcessInput = true;
 			}
-			else if (y < (aVisual._iheight / 3)) {
+			else if (y < (aVisual._iheight *0.5f)) {
 				aActBrake = true;
 			}
-			else if (y > (aVisual._iheight * 2 / 3)) {
+			else if (y < aVisual._iheight *0.75f) {
+				aActSpecial = true;
+			}
+			else if (y < aVisual._iheight) {
 				aActBoost = true;
 			}
 		}
@@ -438,30 +442,41 @@ public class LightBikeGame {
 			prepareNewGame();
 		}
 		else if (isPlayActive) {
+			Player userP = aPlayers[OWN_PLAYER];
 			if (aIsProcessInput) {
-				Player userP = aPlayers[OWN_PLAYER];
 				if (userP != null) 
 					userP.doTurn(inputDirection, aTimeNow);
 				aIsProcessInput = false;
 			}
 			
 			if (aActBoost) {
-				Player userP = aPlayers[OWN_PLAYER];
-				if (userP != null) {
+				if ((userP != null) && (userP.aPower >1)) {
 					userP.aPower-=1;
 					userP.aSpeed*=1.1;
 				}
 				aActBoost=false;
 			}
 			else if (aActBrake) {
-				Player userP = aPlayers[OWN_PLAYER];
-				if (userP != null) {
-					if (userP.aSpeed > this.aSpeed0) {
+				if ((userP != null) && (userP.aPower >1)) {
+					if (userP.aSpeed > aSpeed0) {
 						userP.aPower-=1;
 						userP.aSpeed*=.8;
 					}
 				}
 				aActBrake=false;
+			}
+			else if (aActSpecial) {
+				if ((userP != null) && (userP.aPower >1)) {
+					userP.aCrashRotationTTL++;
+				}
+				aActSpecial=false;
+			}
+			
+			if (userP != null) {
+				if (userP.aPower < 0) {
+					userP.aPower=0;
+					userP.aIsCrash=true;
+				}
 			}
 			
 			// don't activate bots if game not started			

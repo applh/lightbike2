@@ -23,7 +23,11 @@ public class Player {
 
 	public int aPower;
 	public float aSpeed;
+	public int aCrashRotationTTL = 0;
+	public boolean aIsCrash;
 
+	public float aGridSize;
+	
 	private int aPlayerID;
 	private int Direction;
 	private int LastDirection;
@@ -34,12 +38,10 @@ public class Player {
 	private final int MaxTracks = 100;
 	private BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
-	private boolean aIsCrash;
 	private int aDamageMin = 5;
 	private int aDamageRange = 20;
 	
 	private float aCrashRotationZ = 0;
-	private int aCrashRotationTTL = 0;
 	
 	public int aTrailOffset;
 	private float aTrailHeight;
@@ -123,6 +125,8 @@ public class Player {
 		aPower = 100;
 		aIsCrash = false;
 		
+		aGridSize = gridSize;
+		
 		aTrackManager = manager;
 		
 		// init random colors
@@ -145,9 +149,6 @@ public class Player {
     	mPlayerColourAlpha[1]= mPlayerColourDiffuse[1];
     	mPlayerColourAlpha[2]= mPlayerColourDiffuse[2];
     	mPlayerColourAlpha[3]= 1.0f;
-    	//mPlayerColourAlpha[3]= 0.7f + 0.002f * rand.nextInt(100);
-		// store the initial alpha
-		//mPlayerColourAlpha0 = mPlayerColourAlpha[3];
 
 		// INITIAL POSITION
 		Direction = aRand.nextInt(3); // accepts values 0..3;
@@ -155,27 +156,19 @@ public class Player {
 		
 		tabTracks[0] = new BikeTracks(this);
 		aTrailOffset = 0;
-//		Trails[trailOffset].vStart.v[0] = START_POS[player_number][0] * gridSize;
-//		Trails[trailOffset].vStart.v[1] = START_POS[player_number][1] * gridSize;
 		if (player_number == 0) {
-			tabTracks[aTrailOffset].vStart.v[0] = 0.5f * gridSize;
-			tabTracks[aTrailOffset].vStart.v[1] = 0.5f * gridSize;
+			tabTracks[aTrailOffset].vStart.v[0] = 0.5f * aGridSize;
+			tabTracks[aTrailOffset].vStart.v[1] = 0.5f * aGridSize;
 		}
 		else {
 			// pair so cant crash with player at start
-			tabTracks[aTrailOffset].vStart.v[0] = 2 * (1 + aRand.nextInt(99))* 0.005f * gridSize;
-			tabTracks[aTrailOffset].vStart.v[1] = 2 * (1 + aRand.nextInt(99))* 0.005f * gridSize;
+			tabTracks[aTrailOffset].vStart.v[0] = 2 * (1 + aRand.nextInt(99))* 0.005f * aGridSize;
+			tabTracks[aTrailOffset].vStart.v[1] = 2 * (1 + aRand.nextInt(99))* 0.005f * aGridSize;
 		
 			// give some disadvantage to bots 
 			aDamageRange = 80;
 		}
 		
-/*
-		float distance = 0.5f * player_number/LightBikeGame.mCurrentBikes;
-		double angle = rand.nextDouble()* 2.0 * Math.PI;
-		Trails[trailOffset].vStart.v[0] = 0.5f + distance* (float) Math.cos(angle) * gridSize;
-		Trails[trailOffset].vStart.v[1] = 0.5f + distance* (float) Math.sin(angle) * gridSize;
-*/
 		tabTracks[aTrailOffset].vDirection.v[0] = 0.0f;
 		tabTracks[aTrailOffset].vDirection.v[1] = 0.0f;
 		
@@ -359,7 +352,7 @@ public class Player {
 			
 			// check collision
 			checkCrashBike(players, curTime);
-			doCrashTestWalls(walls);			
+			doCrashTestWalls(walls, curTime);			
 		}
 		else if (aIsCrash) {
 			// trail melting down
@@ -432,10 +425,33 @@ public class Player {
 		GLES11.glPopMatrix();		
 	}
 
-	public void doCrashTestWalls(Segment Walls[])
+	public void doCrashTestWalls(Segment Walls[], long curTime)
 	{
 		Segment Current = tabTracks[aTrailOffset];
 		Vector3 V;
+
+		// CROSS THE MIRROR ?
+		if (Current.vStart.v[0] <= 0) {
+			Current.vStart.v[0] = aGridSize-.5f;
+			Current.vDirection.v[0] = -.5f;
+			Current.vDirection.v[1] = 0;
+		}
+		else if (Current.vStart.v[0] >= aGridSize) {
+			Current.vStart.v[0] = .5f;
+			Current.vDirection.v[0] = .5f;
+			Current.vDirection.v[1] = 0;
+		}
+		
+		if (Current.vStart.v[1] <= 0) {
+			Current.vStart.v[1] = aGridSize-.5f;
+			Current.vDirection.v[0] = 0;
+			Current.vDirection.v[1] = -.5f;
+		}
+		else if (Current.vStart.v[1] >= aGridSize) {
+			Current.vStart.v[1] = .5f;
+			Current.vDirection.v[0] = 0;
+			Current.vDirection.v[1] = .5f;
+		}
 		
 		for (int j=0; j < 4; j++) {
 			V = Current.Intersect(Walls[j]);
@@ -445,13 +461,11 @@ public class Player {
 					
 					Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 					Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
-					//Explode = new Explosion(0.0f);
-					aIsCrash = true;
-					Explosion.Create(this);
 					
-					// EXPLOSION MAY NEED SPEED INFO
-					aSpeed = 0.0f;
-					aPower = 0;
+					doDamage(curTime);
+					if (aPower > 0) {
+						aSpeed = aSpeedRef;
+					}
 					break;
 				}
 			}
@@ -679,28 +693,11 @@ public class Player {
 								Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 								Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 								
-								// CREATE EXPLOSION
-								Explosion.Create(this);
-
 								// RANDOM DAMAGE
-								Random rand = new Random();
-								int damage = aDamageMin + rand.nextInt(aDamageRange);							
-								aPower -= damage;
+								doDamage(curTime);
 								
-								if (aPower <= 0)  {
-									aPower = 0;
-									aIsCrash = true;
-									// EXPLOSION MAY NEED SPEED INFO
-									aSpeed = 0.0f;
-								}
-								else {
-									// FIXME
-									// RESET TRACKS FOR BOTH BIKES
-									restartTrack(curTime);
-									testPlayer.restartTrack(curTime);
-									// animate
-									aCrashRotationTTL++;
-								}
+								// kamikaze counts
+								testPlayer.restartTrack(curTime);
 								
 								//break;
 							}
@@ -711,7 +708,31 @@ public class Player {
 			}
 		}
 	}
+	
+	public void doDamage (long curTime) {
+		// CREATE EXPLOSION
+		Explosion.Create(this);
 
+		// RANDOM DAMAGE
+		Random rand = new Random();
+		int damage = aDamageMin + rand.nextInt(aDamageRange);							
+		aPower -= damage;
+
+		if (aPower <= 0)  {
+			aPower = 0;
+			aIsCrash = true;
+			// EXPLOSION MAY NEED SPEED INFO
+			aSpeed = 0.0f;
+		}
+		else {
+			// RESET TRACKS
+			restartTrack(curTime);
+			// RESET SPEED
+			aSpeed = aSpeedRef;
+			// animate
+			aCrashRotationTTL++;			
+		}
+	}
 
 	public void drawActiveTracks (TrackRenderer render, Camera cam)
 	{

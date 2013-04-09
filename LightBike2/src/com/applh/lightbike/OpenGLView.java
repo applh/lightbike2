@@ -31,7 +31,7 @@ public class OpenGLView extends GLSurfaceView {
 	
 		aContext = context;
 		
-		showToast("GAME LOADING... PLEASE WAIT... v3.04.b");
+		showToast("GAME LOADING... PLEASE WAIT... v3.04.c");
 		
 		// FIXME
 		aRenderer = null;
