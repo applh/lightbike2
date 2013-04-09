@@ -1,22 +1,9 @@
 /*
- * Copyright © 2012 Iain Churcher
- *
- * Based on GLtron by Andreas Umbach (www.gltron.org)
- *
- * This file is part of GL TRON.
- *
- * GL TRON is free software: you can redistribute it and/or modify
+ * free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * GL TRON is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with GL TRON.  If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details.
  *
  */
 
@@ -24,11 +11,8 @@ package com.applh.lightbike.Game;
 
 import java.util.Random;
 
-//import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLES11;
 import android.util.FloatMath;
-
-//import com.applh.lightbike.Sound.SoundManager;
 
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.fx.Explosion;
@@ -36,6 +20,9 @@ import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
+
+	public int aPower;
+	public float aSpeed;
 
 	private int aPlayerID;
 	private int Direction;
@@ -47,10 +34,9 @@ public class Player {
 	private final int MaxTracks = 100;
 	private BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
-	private int aPower;
 	private boolean aIsCrash;
-	private int aDamageMin = 10;
-	private int aDamageRange = 40;
+	private int aDamageMin = 5;
+	private int aDamageRange = 20;
 	
 	private float aCrashRotationZ = 0;
 	private int aCrashRotationTTL = 0;
@@ -58,7 +44,6 @@ public class Player {
 	public int aTrailOffset;
 	private float aTrailHeight;
 	
-	private float aSpeed;
 	private float aSpeedRef;
 	private int aSpeedKmh;	
 	private float aBoost;
@@ -882,11 +867,6 @@ public class Player {
 	public int getLastDirection()
 	{
 		return LastDirection;
-	}
-
-	public int getPower()
-	{
-		return aPower;
 	}
 
 	public float getSpeed()

@@ -108,7 +108,10 @@ public class LightBikeGame {
 	
 	private OpenGLRenderer aCustomRenderer = null;
 	private Context aContext = null;
-			
+
+	public boolean aActBoost = false;
+	public boolean aActBrake = false;
+	
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
 		aCustomRenderer = rgl;
@@ -403,11 +406,18 @@ public class LightBikeGame {
 			// TURN LEFT OR RIGHT
 			if (x < (aVisual._iwidth * 2 / 5)) {
 				inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
+				aIsProcessInput = true;
 			}
 			else if (x > (aVisual._iwidth * 3 / 5)) {
 				inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
+				aIsProcessInput = true;
 			}
-			aIsProcessInput = true;
+			else if (y < (aVisual._iheight / 3)) {
+				aActBrake = true;
+			}
+			else if (y > (aVisual._iheight * 2 / 3)) {
+				aActBoost = true;
+			}
 		}
 		else {
 			long endAnim = 2000; // 2 seconds
@@ -434,6 +444,26 @@ public class LightBikeGame {
 					userP.doTurn(inputDirection, aTimeNow);
 				aIsProcessInput = false;
 			}
+			
+			if (aActBoost) {
+				Player userP = aPlayers[OWN_PLAYER];
+				if (userP != null) {
+					userP.aPower-=1;
+					userP.aSpeed*=1.1;
+				}
+				aActBoost=false;
+			}
+			else if (aActBrake) {
+				Player userP = aPlayers[OWN_PLAYER];
+				if (userP != null) {
+					if (userP.aSpeed > this.aSpeed0) {
+						userP.aPower-=1;
+						userP.aSpeed*=.8;
+					}
+				}
+				aActBrake=false;
+			}
+			
 			// don't activate bots if game not started			
 			playAI();
 		}
@@ -786,7 +816,7 @@ public class LightBikeGame {
 	public long getPower (int player) {
 		long res = 0;
 		//FIXME
-		res = aPlayers[OWN_PLAYER].getPower();
+		res = aPlayers[OWN_PLAYER].aPower;
 		return res;
 	}
 	public long getGcMemory () {

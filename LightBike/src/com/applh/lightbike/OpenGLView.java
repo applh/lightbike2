@@ -1,5 +1,5 @@
 /*
- * Copyright © 2012 Iain Churcher
+ * Copyright ï¿½ 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -42,7 +42,7 @@ public class OpenGLView extends GLSurfaceView {
 	
 		aContext = context;
 		
-		showToast("<<< GAME LOADING ... PLEASE WAIT >>>");
+		showToast("LOADING... PLEASE WAIT... v3.04.a");
 		
 		// FIXME
 		aRenderer = null;

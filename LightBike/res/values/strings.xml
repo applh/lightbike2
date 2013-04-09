@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Loading LightBike...</string>
-    <string name="app_name">LightBike</string>
+    <string name="hello">Loading Light Bike...</string>
+    <string name="app_name">Light Bike</string>
     <string name="preferences_title">Preferences</string>
 </resources>
