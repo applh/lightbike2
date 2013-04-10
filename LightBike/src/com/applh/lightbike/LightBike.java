@@ -30,15 +30,22 @@ import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.applh.lightbike.Preferences;
+
 public class LightBike extends Activity {
     /** Called when the activity is first created. */
 	private OpenGLView aView = null;
+	public static int aResPref = -1;
 		
     @Override
     public void onCreate (Bundle savedInstanceState) {
         
 	   	super.onCreate(savedInstanceState);
-
+	   	
+	   	// Resources settings
+	   	aResPref=R.layout.preferences;
+	   	Preferences.aResPref=aResPref;
+	   	
     	// GET SCREEN WIDTH AND HEIGHT
 		WindowManager w = getWindowManager();
 	    Display d = w.getDefaultDisplay();

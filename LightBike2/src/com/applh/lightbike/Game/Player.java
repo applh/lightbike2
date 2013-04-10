@@ -21,7 +21,7 @@ import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
 
-	public int aPower;
+	public int aPower = 0;
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
 	public boolean aIsCrash;
@@ -295,24 +295,31 @@ public class Player {
 	}
 
 	public void doRuleTurn (int bonus) {
-		// turn is good :)
+		// turn is good :-)
 		Score += bonus;
+		
+		// FIXME makes game too difficult
+		// turn is bad :-/ 
+		// aPower -= 1;
+		
 		// ref speed
 		int speedRef1 = Math.round(15 * aSpeedRef) + 50;
 		int speedRef0 = Math.round(15 * aSpeedRef) - 50;
 
-		float fBrake = 0.08f * aRand.nextFloat();
+		float fBrake = 0.06f * aRand.nextFloat();
 		if (aSpeedKmh > speedRef1)
-			fBrake = 0.16f * aRand.nextFloat();
+			fBrake = 0.12f * aRand.nextFloat();
 		else if (aSpeedKmh < speedRef0)
 			fBrake = 0;
 		
 		aSpeed = (1 - fBrake) * aSpeed;
+
+		if (aSpeed < aSpeedRef) 
+			aSpeed = aSpeedRef;
+		
 		// random boost 0.1%-0.5% or more if slow
 		aSpeedKmh = (int) (15 * aSpeed);
 		// brake factor
-//		float fBrake = 0.01f * aRand.nextInt(12);
-//		float fBrake = 0.01f * aRand.nextInt(10);
 		aBoostFactor = 3;
 		//int SpeedRef = 200;
 		int minBoost = 0;
@@ -322,9 +329,7 @@ public class Player {
 			minBoost = 1;
 		
 		if (aSpeedKmh > 0) {
-			//myBoostFactor = rand.nextInt(5*SpeedRef/mSpeedKmh);
-			//aBoostFactor = aRand.nextInt(3*SpeedRef/aSpeedKmh);
-			aBoostFactor = Math.round(3 * aRand.nextFloat());
+			aBoostFactor = Math.round(2.5f * aRand.nextFloat());
 			if (aBoostFactor < minBoost)
 				aBoostFactor = minBoost;
 			

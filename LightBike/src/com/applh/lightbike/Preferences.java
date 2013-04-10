@@ -22,8 +22,6 @@
  */
 package com.applh.lightbike;
 
-import com.applh.lightbike.R;
-
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceActivity;
@@ -32,12 +30,15 @@ import android.widget.ListView;
 
 public class Preferences extends PreferenceActivity {
 	
+	public static int aResPref = -1;
 	public static long LastUpdate = SystemClock.uptimeMillis();
 	 @Override
 	    protected void onCreate(Bundle savedInstanceState) {
 	        // TODO Auto-generated method stub
 	        super.onCreate(savedInstanceState);
-	        addPreferencesFromResource(R.layout.preferences);
+	        if (aResPref >= 0) {
+		        addPreferencesFromResource(aResPref);	        	
+	        }
 	    }
 	 
 	 @Override

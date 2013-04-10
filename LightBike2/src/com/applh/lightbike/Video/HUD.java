@@ -24,7 +24,6 @@ package com.applh.lightbike.Video;
 
 import android.content.Context;
 import android.opengl.GLES11;
-import android.util.FloatMath;
 
 import com.applh.lightbike.OpenGLRenderer;
 import com.applh.lightbike.Game.LightBikeGame;
@@ -32,6 +31,13 @@ import com.applh.lightbike.fx.SetupGL;
 
 public class HUD {
 	
+	public long aPower2ref;
+	public long aPower2display;
+	public long aPower2bike;
+
+	public int aPowerFontMin = 24;
+	public int aPowerFont = 24;
+
 	private static Font aXenoFont = null;
 
 	// console members
@@ -45,13 +51,10 @@ public class HUD {
 	private String aTextBottomL;
 	private String aTextBottomR;
 
-	private long aPower2display;
-	private long aPower2bike;
 	private int aPowerX0;
 	private int aPowerY0;
 	private int aPowerX;
 	private int aPowerY;
-	private int aPowerFont;
 	private boolean aPowerReset;
 	
 	
@@ -77,8 +80,9 @@ public class HUD {
 	    emptyConsole();
 	    
 	    // FIXME
-	    aPower2display = 100;
-	    aPower2bike = 100;
+	    aPower2ref = 200;
+	    aPower2display = aPower2ref;
+	    aPower2bike = aPower2ref;
 	    aPowerReset = true;
 	}
 	
@@ -129,8 +133,8 @@ public class HUD {
 	    dispLoser = false;
 
 	    // FIXME
-	    aPower2display = 100;
-	    aPower2bike = 100;
+	    aPower2display = aPower2ref;
+	    aPower2bike = aPower2ref;
 		aPowerReset = true;
 		aMidX = game.aVisual._iwidth/2;
 	}
@@ -289,32 +293,24 @@ public class HUD {
 		
 		String textPower = String.format(
 				"POWER %d", 
-//				aPower2display
 				aPower2bike
 				);
 
-//		int delta = (int) Math.abs(aPower2display - aPower2bike);
-		float ratio = 1.0f - aPower2display/100.0f;
-//		float ratio0 = 1.0f - aPower2bike/100.0f;
-//		int fontSize = 32 + (int) Math.floor(32 * ratio0);
+		float ratio = 1.0f - aPower2display/(1.0f * aPower2ref);
 		
 		float red = ratio;
 		float green = 1.0f - ratio;
-		float blue = FloatMath.sin((float) (ratio * Math.PI));
+		float blue = (float) Math.sin((float) (ratio * Math.PI));
 		GLES11.glColor4f(red, green, blue, 1.0f);
 
-		//int dX = 8 * delta;
-		//int dY = 8 * delta;
-//		aXenoFont.drawText(game.aVisual._iwidth/2 - dX, game.aVisual._iheight - 20 - fontSize - dY, fontSize, textPower);
 		if (aPowerReset) {
-			aPowerFont = 24 + (int) (32 * (1.0f - aPower2bike/100.0f));
-
-			//aPowerX0 = game.aVisual._iwidth/2;
-			//aPowerY0 = game.aVisual._iheight - 8 - aPowerFont;
+			aPowerFont = 24 + (int) (32 * (1.0f - aPower2bike/aPower2ref));
+			if (aPowerFont < aPowerFontMin) 
+				aPowerFont = aPowerFontMin;
+			
 			aPowerX0 = 16;
 			aPowerY0 = game.aVisual._iheight - 55 - aPowerFont;
 			
-//			aPowerX = (int) (game.aVisual._iwidth  * 0.30);
 			aPowerX = aMidX;
 			aPowerY = (int) (game.aVisual._iheight * 0.60);
 			

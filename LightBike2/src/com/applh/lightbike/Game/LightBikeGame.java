@@ -41,6 +41,8 @@ import com.applh.lightbike.matrix.Vector3;
 
 public class LightBikeGame {
 	
+	public int aPowerBonus = 100;
+	
 	private long aTimeNow = 0;
 	private long aFrameT0 = 0;
 	private long aFrameDT = 0;
@@ -312,7 +314,14 @@ public class LightBikeGame {
 	    aColor0 = aPrefs.playerColor();
 	    aSpeed0 = aPrefs.speed();
 		for (int plyr = 0; plyr < aNbPlayers0; plyr++) {
-			aPlayers[plyr] = new Player(aTrackManager, plyr, aGrideSize0, aSpeed0, aColor0);
+			Player curPlayer = new Player(aTrackManager, plyr, aGrideSize0, aSpeed0, aColor0);
+			if (plyr == LightBikeGame.OWN_PLAYER) {
+				curPlayer.aPower = aPowerBonus + 100;
+			}
+			else {
+				curPlayer.aPower = 100 + aPowerBonus;				
+			}
+			aPlayers[plyr] = curPlayer;
 		}
 		
 		ComputerAI.initAI2(aWalls, aPlayers, aGrideSize0);
@@ -769,6 +778,8 @@ public class LightBikeGame {
 		aCam.setTravelling(false);
 		// stop speed
 		aPlayers[OWN_PLAYER].setSpeed(0.0f);
+		// increase power from game to game
+		aPowerBonus = 100 + aPlayers[OWN_PLAYER].aPower;
 		if (winner) {
 			HUD.displayWin();
 		}
