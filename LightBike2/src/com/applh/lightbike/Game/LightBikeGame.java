@@ -292,7 +292,7 @@ public class LightBikeGame {
 	    
 	    if (checkModelRebuild()) {
 	    	// Load Models
-	    	BikeModel = new Model(aContext, R.raw.lightcyclehigh); // SOMEDAY SEVERAL MODELS ;-)
+	    	BikeModel = new Model(aContext, R.raw.lightcycle3d); // SOMEDAY SEVERAL MODELS ;-)
 	    	aTrackRenderer = new TrackRenderer();
 	    	aTrackManager = new TrackManager(MAX_PLAYERS, aTrackRenderer);
 	    }

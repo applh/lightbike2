@@ -49,7 +49,7 @@ public class Player {
 	private float aSpeedRef;
 	private int aSpeedKmh;	
 	private float aBoost;
-	private int aBoostFactor;
+	private float aBoostFactor;
 	
 	public long TurnTime;
 	public final float DIRS_X[] = {0.0f, -1.0f, 0.0f, 1.0f};
@@ -306,9 +306,9 @@ public class Player {
 		int speedRef1 = Math.round(15 * aSpeedRef) + 50;
 		int speedRef0 = Math.round(15 * aSpeedRef) - 50;
 
-		float fBrake = 0.06f * aRand.nextFloat();
+		float fBrake = 0.05f * aRand.nextFloat();
 		if (aSpeedKmh > speedRef1)
-			fBrake = 0.12f * aRand.nextFloat();
+			fBrake = 0.10f * aRand.nextFloat();
 		else if (aSpeedKmh < speedRef0)
 			fBrake = 0;
 		
@@ -322,14 +322,14 @@ public class Player {
 		// brake factor
 		aBoostFactor = 3;
 		//int SpeedRef = 200;
-		int minBoost = 0;
+		float minBoost = 0;
 		if (aSpeedKmh < speedRef0)
-			minBoost = 2;
+			minBoost = 1.0f;
 		else if (aSpeedKmh < speedRef1)
-			minBoost = 1;
+			minBoost = .5f;
 		
 		if (aSpeedKmh > 0) {
-			aBoostFactor = Math.round(2.5f * aRand.nextFloat());
+			aBoostFactor = Math.round(2.0f * aRand.nextFloat());
 			if (aBoostFactor < minBoost)
 				aBoostFactor = minBoost;
 			

@@ -75,7 +75,7 @@ public class Camera {
 	private static final int CAM_FREE_CHI = 2;
 	
 	private static final float CLAMP_R_MIN = 7.0f;
-	private static final float CLAMP_R_MAX = 45.0f;
+	private static final float CLAMP_R_MAX = 40.0f;
 	private static final float CLAMP_CHI_MIN = (((float)Math.PI) / 8.0f);
 	private static final float CLAMP_CHI_MAX = (3.0f * (float)Math.PI / 8.0f);
 	
@@ -332,7 +332,7 @@ public class Camera {
 						_steadyCount = 0;
 						Random rand = new Random();
 						if (_deltaR > 0)
-							_steadyCountMax = 500 + rand.nextInt(200);
+							_steadyCountMax = 1000 + rand.nextInt(200);
 						else 
 							_steadyCountMax = 50 + rand.nextInt(100);
 					}					
