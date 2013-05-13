@@ -419,7 +419,7 @@ public class Player {
 		//gl.glTranslatef((GridSize/2.0f), (GridSize/2.0f), 0.0f);
 		//gl.glTranslatef(_Player._PlayerXpos, _Player._PlayerYpos, 0.0f);
 		// LH HACK
-		LightBikeGame.GetBike(0).Draw2(mPlayerColourSpecular, mPlayerColourDiffuse);
+		LightBikeGame.GetBike(0).Draw(mPlayerColourSpecular, mPlayerColourDiffuse);
 
 		// OUT
 		//GLES11.glDisable(GLES11.GL_CULL_FACE);
@@ -501,92 +501,6 @@ public class Player {
 		return res;
 */
 	}
-	
-	private boolean vertBB (float x0, float y0, float x1, float y1) {
-		boolean res = false;
-		if (x0 == x1) {
-			boolean res0 = false;
-			boolean res1 = false;
-			// 0|X|0
-			// 0|X|0
-			// 0|X|0
-			if ((x0 >= aBBminX) && (x0 <= aBBmaxX)) {
-				// 0|0|0
-				// 0|X|0
-				// 0|0|0
-				if ((y0 >= aBBminY) && (y0 <= aBBmaxY))
-					res0 = true;
-				if ((y1 >= aBBminY) && (y1 <= aBBmaxY))
-					res1 = true;
-				
-				res = res0 || res1;
-				if (!res) {
-					res0 = true;
-					res1 = true;
-					if ((y0 < aBBminY) && (y1 < aBBminY)) {
-						// 0|0|0
-						// 0|0|0
-						// 0|X|0
-						res0 = false;
-						res1 = false;						
-					}
-					if ((y0 > aBBmaxY) && (y1 > aBBmaxY)) {
-						// 0|X|0
-						// 0|0|0
-						// 0|0|0
-						res0 = false;
-						res1 = false;						
-					}
-				}
-			}
-			res = res0 || res1;
-		}
-		else {
-			// NEEDS FURTHER CHECK
-			res = true;
-		}
-		
-		return res;
-	}
-
-	private boolean inBB3 (float x0, float y0, float x1, float y1) {
-		boolean res = false;
-		boolean res0 = false;
-		boolean res1 = false;
-		
-		if (x0 == x1) {
-			res = vertBB(x0, y0, x1, y1);
-		}
-		else if (y0 == y1) {
-			res = vertBB(y0, x0, y1, x1);
-		}
-		else {		
-			if ((x0 > aBBminX) && (x0 < aBBmaxX)) res0 = true;
-			if ((y0 > aBBminY) && (y0 < aBBmaxY)) res0 = true;
-			if ((x1 > aBBminX) && (x1 < aBBmaxX)) res1 = true;
-			if ((y1 > aBBminY) && (y1 < aBBmaxY)) res1 = true;
-			res = res0 || res1;
-		}		
-		
-		// FIXME
-		return res;
-	}
-
-	private boolean maybeBB2 (float x0, float y0, float x1, float y1) {
-		boolean res = false;
-		boolean res0 = false;
-		boolean res1 = false;
-		
-		if ((x0 > aBBminX) && (x0 < aBBmaxX)) res0 = true;
-		if ((y0 > aBBminY) && (y0 < aBBmaxY)) res0 = true;
-		if ((x1 > aBBminX) && (x1 < aBBmaxX)) res1 = true;
-		if ((y1 > aBBminY) && (y1 < aBBmaxY)) res1 = true;
-		res = res0 || res1;
-		
-		// FIXME
-		return res;
-	}
-
 	
 	private boolean canCrossBB (float x0, float y0, float dx, float dy) {
 		boolean res = true;

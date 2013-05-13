@@ -344,6 +344,8 @@ public class Camera {
 				TmpTDest[1] = y;
 				TmpTDest[2] = B_HEIGHT;
 				break;
+			default:
+				break;
 		}
 		
 		_cam.v[0] = TmpDest[0];

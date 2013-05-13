@@ -5,11 +5,11 @@ import com.applh.lightbike.Video.Segment;
 public class BikeTracks extends Segment {
 
 	private static long NbTotal = 0;
-	private Player aBike;
+//	private Player aBike;
 	
 	public BikeTracks (Player bike) {
 		NbTotal++;
-		aBike = bike;
+//		aBike = bike;
 	}
 
 	public static long GetTotal () {

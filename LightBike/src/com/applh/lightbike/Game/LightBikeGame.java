@@ -77,7 +77,7 @@ public class LightBikeGame {
 	
 	private boolean aIsHome = true;
 	private boolean aIsReady = false;
-	private boolean aIsPause = false;
+//	private boolean aIsPause = false;
 	
 	// sound index
 	public static int CRASH_SOUND = 1;
@@ -148,7 +148,7 @@ public class LightBikeGame {
 		
 		aIsHome = true;
 		aIsReady = false;
-		aIsPause = false;
+//		aIsPause = false;
 					
 		// USER Info Display
 		HUD = null;
@@ -338,7 +338,7 @@ public class LightBikeGame {
 			soundFx.stopMusicBG();
 		}
 		
-		aIsPause = true;
+//		aIsPause = true;
 		
 	}
 	
@@ -366,7 +366,7 @@ public class LightBikeGame {
 		// better restart game
 		aIsGameReset = true;
 
-		aIsPause = false;
+//		aIsPause = false;
 	}
 	
 	public void updateScreenSize(int width, int height)

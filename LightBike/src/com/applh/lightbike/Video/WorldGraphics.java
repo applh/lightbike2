@@ -138,7 +138,7 @@ public class WorldGraphics {
 			_SkyBoxVertexBuffers[i] = ByteBufferManager.CreateFloatBuffer(sides[i]);
 		}
 	}
-		
+/*		
 	private void initSkyBox_SAV ()
 	{
 		float d = (float)aGridSize * 2.0f;
@@ -151,44 +151,44 @@ public class WorldGraphics {
 			d,  d,  d,  
 			d, -d, -d,    
 		  	d,  d, -d,    
-		  }, /* 0 */	  
+		  }, // 0	  
 		  { 
 			-d, -d,  d,    
 		  	 d, -d,  d, 
 			-d, -d, -d,   
 		  	 d, -d, -d,  
-		  }, /* 1 */
+		  }, // 1
 		  { 
 			-d,  d,  d,    
 			-d, -d,  d, 
 			-d,  d, -d,    
 			-d, -d, -d, 
-		  }, /* 2 */ 
+		  }, // 2
 		  { 
 			 d,  d,  d,    
 			-d,  d,  d,  
 			 d,  d, -d,     
 			-d,  d, -d,   
-		  }, /* 3 */
+		  }, // 3
 		  { 
 			-d, -d, -d,    
 			 d, -d, -d,   
 			-d,  d, -d,  
 			 d,  d, -d, 
-		  }, /* bottom */
+		  }, // bottom
 		  { 
 			-d, -d,  d,    
 			 d, -d,  d, 
 			-d,  d,  d,     
 			 d,  d,  d,    
-		  }, /* top */
+		  }, // top
 		};
 
 		for (int i=0; i<6; i++) {
 			_SkyBoxVertexBuffers[i] = ByteBufferManager.CreateFloatBuffer(sides[i]);
 		}
 	}
-
+*/
 	
 	private void initGridWalls ()
 	{

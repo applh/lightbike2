@@ -16,7 +16,7 @@ import java.nio.ShortBuffer;
 public class ByteBufferManager {
 
 	private static int CurFrameFB = 0;
-	private static int CurFrameReuseCount = 0;
+//	private static int CurFrameReuseCount = 0;
 	
 	private static FloatBuffer TabReuseFB[] = null;
 	private static int MaxTabFB = 400;
@@ -50,7 +50,7 @@ public class ByteBufferManager {
 		TabReuseFB = null;
 		// RESET
 		CurFrameFB = 0;
-		CurFrameReuseCount = 0;
+//		CurFrameReuseCount = 0;
 
 		FB3 = null;
 		FB4 = null;
@@ -67,7 +67,7 @@ public class ByteBufferManager {
 		}
 		// RESET
 		CurFrameFB = 0;
-		CurFrameReuseCount = 0;
+//		CurFrameReuseCount = 0;
 		
 		return res;
 		
@@ -181,7 +181,7 @@ public class ByteBufferManager {
 				ReuseFB.rewind();
 				
 				// get some stats
-				CurFrameReuseCount++;
+//				CurFrameReuseCount++;
 			}
 		}
 

@@ -79,7 +79,7 @@ public class LightBikeGame {
 	
 	private boolean aIsHome = true;
 	private boolean aIsReady = false;
-	private boolean aIsPause = false;
+//	private boolean aIsPause = false;
 	
 	// sound index
 	public static int CRASH_SOUND = 1;
@@ -88,8 +88,9 @@ public class LightBikeGame {
 		
 	// USER Info Display
 	private static HUD HUD = null;
+
 	private static Model BikeModel = null;
-		
+	public int aBikeRes = R.raw.lightcycle_high;	
 	
 	public Segment aWalls[] = null;
 	
@@ -154,7 +155,7 @@ public class LightBikeGame {
 		
 		aIsHome = true;
 		aIsReady = false;
-		aIsPause = false;
+//		aIsPause = false;
 					
 		// USER Info Display
 		HUD = null;
@@ -292,7 +293,7 @@ public class LightBikeGame {
 	    
 	    if (checkModelRebuild()) {
 	    	// Load Models
-	    	BikeModel = new Model(aContext, R.raw.lightcycle3d); // SOMEDAY SEVERAL MODELS ;-)
+	    	BikeModel = new Model(aContext, aBikeRes); // SOMEDAY SEVERAL MODELS ;-)
 	    	aTrackRenderer = new TrackRenderer();
 	    	aTrackManager = new TrackManager(MAX_PLAYERS, aTrackRenderer);
 	    }
@@ -351,7 +352,7 @@ public class LightBikeGame {
 			soundFx.stopMusicBG();
 		}
 		
-		aIsPause = true;
+//		aIsPause = true;
 		
 	}
 	
@@ -379,7 +380,7 @@ public class LightBikeGame {
 		// better restart game
 		aIsGameReset = true;
 
-		aIsPause = false;
+//		aIsPause = false;
 	}
 	
 	public void updateScreenSize(int width, int height)
@@ -413,23 +414,30 @@ public class LightBikeGame {
 		}
 		else if (isPlayActive) {
 			// GAME PLAY
-			// TURN LEFT OR RIGHT
-			if (x < (aVisual._iwidth * 2/5)) {
-				inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
-				aIsProcessInput = true;
+			
+			// bottom half screen
+			if (y > aVisual._iheight *0.5f) {
+				// TURN LEFT OR RIGHT
+				if (x < (aVisual._iwidth * 1/4)) {
+					inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
+					aIsProcessInput = true;
+				}
+				else if (x > (aVisual._iwidth * 3/4)) {
+					inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
+					aIsProcessInput = true;
+				}
+				else if (x < (aVisual._iwidth * 2/4)) {
+					aActBrake = true;
+				}
+				else if (x > (aVisual._iwidth * 2/4)) {
+					aActBoost = true;
+				}
+				else {
+					aActSpecial = true;
+				}
 			}
-			else if (x > (aVisual._iwidth * 3/5)) {
-				inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
-				aIsProcessInput = true;
-			}
-			else if (y < (aVisual._iheight *0.5f)) {
-				aActBrake = true;
-			}
-			else if (y < aVisual._iheight *0.75f) {
+			else {
 				aActSpecial = true;
-			}
-			else if (y < aVisual._iheight) {
-				aActBoost = true;
 			}
 		}
 		else {

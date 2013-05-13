@@ -55,8 +55,8 @@ public class SetupGL {
 
 	private static Font aXenoFont = null;
 
-	private static int aScreenW = 512;
-	private static int aScreenH = 512;
+//	private static int aScreenW = 512;
+//	private static int aScreenH = 512;
 	
 	private static int aMinFilter = GLES11.GL_LINEAR_MIPMAP_NEAREST;
 	private static int aMaxFilter = GLES11.GL_LINEAR;
@@ -81,8 +81,8 @@ public class SetupGL {
 		
 		aXenoFont = null;
 		
-		aScreenW = screenW;
-		aScreenH = screenH;
+//		aScreenW = screenW;
+//		aScreenH = screenH;
 		
 		// reinit textures as context changed
 		SplashTex = null;

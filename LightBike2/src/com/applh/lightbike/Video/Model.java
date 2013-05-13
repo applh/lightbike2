@@ -1,5 +1,5 @@
 /*
- * Copyright © 2012 Iain Churcher
+ * Copyright ï¿½ 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -284,34 +284,8 @@ public class Model {
 		computeBBox();
 		
 	}
-/*
+
 	public void Draw (float ambient_color[], float diffuse_color[])
-	{
-		int MaterialCount = mMaterials.GetNumber();
-		
-		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
-		GLES11.glEnableClientState(GLES11.GL_NORMAL_ARRAY);
-		GLES11.glVertexPointer(3, GLES11.GL_FLOAT, 0, mVertexBuffer);
-		GLES11.glNormalPointer(GLES11.GL_FLOAT, 0, mNormalBuffer);
-
-		mMaterials.SetMaterialColour("Hull", ColourType.E_AMBIENT, ambient_color);
-		mMaterials.SetMaterialColour("Hull", ColourType.E_DIFFUSE, diffuse_color);
-
-		for(int i=0; i<MaterialCount;i++) {
-			if(mIndicesBuffer[i].capacity() > 0) {
-				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_AMBIENT, mMaterials.GetAmbient(i));
-				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_DIFFUSE, mMaterials.GetDiffuse(i));
-				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SPECULAR, mMaterials.GetSpecular(i));
-				GLES11.glMaterialf(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SHININESS, mMaterials.GetShininess(i));
-				
-				GLES11.glDrawElements(GLES11.GL_TRIANGLES, mIndicesBuffer[i].capacity(),
-						GLES11.GL_UNSIGNED_SHORT, mIndicesBuffer[i]);
-			}
-		}
-		
-	}
-*/
-	public void Draw2 (float ambient_color[], float diffuse_color[])
 	{
 		int MaterialCount = mMaterials.GetNumber();
 		
@@ -336,78 +310,7 @@ public class Model {
 		}
 		
 	}
-/*
-	public void Explode (float radius)
-	{
-		int i,j,k;
-		
-		float normal[] = new float[3];
-		float vertex[] = new float[3];
-		FloatBuffer Normals;
-		FloatBuffer Vertex;
-		short indices;
 
-		final int EXP_VECTORS = 10;
-		
-		float vectors[][] = {
-				{ 0.03f, -0.06f, -0.07f }, 
-			    { 0.04f, 0.08f, -0.03f }, 
-			    { 0.10f, -0.04f, -0.07f }, 
-			    { 0.06f, -0.09f, -0.10f }, 
-			    { -0.03f, -0.05f, 0.02f }, 
-			    { 0.07f, 0.08f, -0.00f }, 
-			    { 0.01f, -0.04f, 0.10f }, 
-			    { -0.01f, -0.07f, 0.09f }, 
-			    { 0.01f, -0.01f, -0.09f }, 
-			    { -0.04f, 0.04f, 0.02f }
-		};
-		
-		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
-		GLES11.glEnableClientState(GLES11.GL_NORMAL_ARRAY);
-		
-		for (i = 0; i <  mMaterials.GetNumber(); i++) {
-			GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_AMBIENT, mMaterials.GetAmbient2(i));
-			GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_DIFFUSE, mMaterials.GetDiffuse(i));
-			GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SPECULAR, mMaterials.GetSpecular(i));
-			GLES11.glMaterialf(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SHININESS, mMaterials.GetShininess(i));
-			
-			for(j=0; j < (mIndicesBuffer[i].capacity() / 3); j++) {
-				indices = mIndicesBuffer[i].get(3 * j);
-				
-				normal[0] = mNormalBuffer.get(3 * indices);
-				normal[1] = mNormalBuffer.get((3 * indices) + 1);
-				normal[2] = mNormalBuffer.get((3 * indices) + 2);
-						
-				GLES11.glPushMatrix();
-				GLES11.glTranslatef(
-						radius * (normal[0] + vectors[j % EXP_VECTORS][0]),
-						radius * (normal[1] + vectors[j % EXP_VECTORS][1]),
-						Math.abs(radius * (normal[2] + vectors[j % EXP_VECTORS][2])) );
-				
-				for (k=0; k < 3; k++) {
-					indices = mIndicesBuffer[i].get(3 * j + k);
-				
-					normal[0] = mNormalBuffer.get(3 * indices);
-					normal[1] = mNormalBuffer.get((3 * indices) + 1);
-					normal[2] = mNormalBuffer.get((3 * indices) + 2);
-					
-					Normals = ByteBufferManager.ReuseFloatBuffer(normal);
-					
-					vertex[0] = rawVertex[3 * indices];
-					vertex[1] = rawVertex[(3 * indices) + 1];
-					vertex[2] = rawVertex[(3 * indices) + 2];
-					
-					Vertex = ByteBufferManager.ReuseFloatBuffer(vertex);
-					
-					GLES11.glVertexPointer(3, GLES11.GL_FLOAT, 0, Vertex);
-					GLES11.glNormalPointer(GLES11.GL_FLOAT, 0, Normals);
-					GLES11.glDrawArrays(GLES11.GL_TRIANGLES, 0, 3);
-				}
-				GLES11.glPopMatrix();
-			}
-		}
-	}
-*/	
 	private void computeBBox()
 	{
 		int i, j;
