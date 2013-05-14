@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.applh.lightbike2"
       android:versionCode="15"
-      android:versionName="3.04.f"
+      android:versionName="4.0"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="15" />
     

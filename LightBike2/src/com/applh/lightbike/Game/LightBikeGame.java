@@ -42,6 +42,7 @@ import com.applh.lightbike.matrix.Vector3;
 public class LightBikeGame {
 	
 	public int aPowerBonus = 100;
+	public int aPowerBonus0 = 100;
 	
 	private long aTimeNow = 0;
 	private long aFrameT0 = 0;
@@ -317,10 +318,10 @@ public class LightBikeGame {
 		for (int plyr = 0; plyr < aNbPlayers0; plyr++) {
 			Player curPlayer = new Player(aTrackManager, plyr, aGrideSize0, aSpeed0, aColor0);
 			if (plyr == LightBikeGame.OWN_PLAYER) {
-				curPlayer.aPower = aPowerBonus + 100;
+				curPlayer.aPower = aPowerBonus + aPowerBonus0;
 			}
 			else {
-				curPlayer.aPower = 100 + aPowerBonus;				
+				curPlayer.aPower = aPowerBonus + aPowerBonus0;
 			}
 			aPlayers[plyr] = curPlayer;
 		}
@@ -415,24 +416,26 @@ public class LightBikeGame {
 		else if (isPlayActive) {
 			// GAME PLAY
 			
-			// bottom half screen
-			if (y > aVisual._iheight *0.5f) {
+			// bottom 2/3 screen
+			// avoid android back button
+			if (y > aVisual._iheight *0.3f) {
 				// TURN LEFT OR RIGHT
-				if (x < (aVisual._iwidth * 1/4)) {
+				if (x < (aVisual._iwidth * 1/5)) {
 					inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
 					aIsProcessInput = true;
 				}
-				else if (x > (aVisual._iwidth * 3/4)) {
+				else if (x > (aVisual._iwidth * 4/5)) {
 					inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
 					aIsProcessInput = true;
 				}
-				else if (x < (aVisual._iwidth * 2/4)) {
+				else if (x < (aVisual._iwidth * 2/5)) {
 					aActBrake = true;
 				}
-				else if (x > (aVisual._iwidth * 2/4)) {
+				else if (x > (aVisual._iwidth * 3/5)) {
 					aActBoost = true;
 				}
 				else {
+					// middle button
 					aActSpecial = true;
 				}
 			}
@@ -469,7 +472,7 @@ public class LightBikeGame {
 			if (aActBoost) {
 				if ((userP != null) && (userP.aPower >1)) {
 					userP.aPower-=1;
-					userP.aSpeed*=1.1;
+					userP.aSpeed*=1.2;
 				}
 				aActBoost=false;
 			}
@@ -477,14 +480,15 @@ public class LightBikeGame {
 				if ((userP != null) && (userP.aPower >1)) {
 					if (userP.aSpeed > aSpeed0) {
 						userP.aPower-=1;
-						userP.aSpeed*=.8;
+						userP.aSpeed*=.9;
 					}
 				}
 				aActBrake=false;
 			}
 			else if (aActSpecial) {
-				if ((userP != null) && (userP.aPower >1)) {
-					userP.aCrashRotationTTL++;
+				if ((userP != null) && (userP.aPower >0)) {
+					// MAX Power Bonus
+					userP.doSpecial(aPowerBonus0, aTimeNow);
 				}
 				aActSpecial=false;
 			}

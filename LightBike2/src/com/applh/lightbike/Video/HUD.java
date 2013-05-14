@@ -1,9 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
- *
- * Based on GLtron by Andreas Umbach (www.gltron.org)
- *
- * This file is part of GL TRON.
  *
  * GL TRON is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +81,7 @@ public class HUD {
 	    aPowerReset = true;
 	}
 	
+
 	public void drawInfo ()
 	{
 		//GLES11.glDisable(GLES11.GL_DEPTH_TEST);
@@ -96,6 +92,7 @@ public class HUD {
 		if(dispFPS)
 			drawFPS();
 		drawBottom();
+		drawCommands();
 
 		drawWinLose();
 		drawPower();
@@ -104,6 +101,7 @@ public class HUD {
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 	}
 
+	
 	public void drawInfoHome ()
 	{
 		//GLES11.glDisable(GLES11.GL_DEPTH_TEST);
@@ -115,6 +113,7 @@ public class HUD {
 			drawFPS();
 
 		drawBottom();
+		
 		drawConsole();
 		drawInstructions();
 
@@ -163,13 +162,24 @@ public class HUD {
 		}
 
 	}
-	
-	
+		
 	public void addLineToConsole (String str)
 	{
 		int curC = curConsole % consoleBuffer.length;		
 		consoleBuffer[curC] = str;
 		curConsole++;
+	}
+
+	public void drawCommands () 
+	{
+		int x8 = aMidX / 5;
+		
+		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
+		aXenoFont.drawText(1*x8 -48, 48, 32, "==\\");
+		aXenoFont.drawText(3*x8 -48, 48, 32, "(-)");	
+		aXenoFont.drawText(5*x8 -48, 48, 32, "(o)");	
+		aXenoFont.drawText(7*x8 -48, 48, 32, "(+)");	
+		aXenoFont.drawText(9*x8 -48, 48, 32, "/==");	
 	}
 	
 	private void drawBottom ()

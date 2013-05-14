@@ -240,14 +240,14 @@ public class Player {
 		}
 		
 	}
-	public void doTurn (int direction, long current_time)
+	public void doTurn (int direction, long curTime)
 	{
 		float x = getXpos();
 		float y = getYpos();
 		
 		// FIXME
 		if (aTrailOffset >= tabTracks.length) {
-			restartTrack(current_time);
+			restartTrack(curTime);
 		}
 		aTrailOffset++;
 		tabTracks[aTrailOffset] = new BikeTracks(this);
@@ -258,7 +258,7 @@ public class Player {
 		
 		LastDirection = Direction;
 		Direction = (Direction + direction) % 4;
-		TurnTime = current_time;
+		TurnTime = curTime;
 
 		updateBBox(x, y);
 		
@@ -626,6 +626,20 @@ public class Player {
 				}
 			}
 		}
+	}
+	
+	public void doSpecial (int maxPower, long curTime) {
+
+		// Gain Power
+		if (aPower < maxPower) 
+			aPower += aTrailOffset;
+	
+		// RESET TRACKS
+		restartTrack(curTime);
+		// RESET SPEED
+		aSpeed = aSpeedRef;
+		// animate
+		aCrashRotationTTL++;				
 	}
 	
 	public void doDamage (long curTime) {
