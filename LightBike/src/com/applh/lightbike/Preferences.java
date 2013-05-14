@@ -31,6 +31,7 @@ import android.widget.ListView;
 public class Preferences extends PreferenceActivity {
 	
 	public static int aResPref = -1;
+
 	public static long LastUpdate = SystemClock.uptimeMillis();
 	 @Override
 	    protected void onCreate(Bundle savedInstanceState) {

@@ -28,6 +28,7 @@ import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
 import com.applh.lightbike.R;
 
+import com.applh.lightbike.OpenGLRenderer;
 import com.applh.lightbike.Game.Camera.CamType;
 //import com.applh.lightbike.Sound.SoundManager;
 import com.applh.lightbike.Video.*;
@@ -36,10 +37,12 @@ import com.applh.lightbike.fx.Explosion;
 import com.applh.lightbike.fx.SetupGL;
 import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
-import com.applh.lightbike.OpenGLRenderer;
 
 
 public class LightBikeGame {
+	
+	public int aPowerBonus = 100;
+	public int aPowerBonus0 = 100;
 	
 	private long aTimeNow = 0;
 	private long aFrameT0 = 0;
@@ -48,7 +51,7 @@ public class LightBikeGame {
 	
 	// Define arena setting 
 	private static float aGrideSize0 = 480.0f;
-	private static float aSpeed0 = 10.0f;
+	private float aSpeed0 = 10.0f;
 	private static int aColor0 = 2;
 
 	public static final int MAX_PLAYERS = 24;
@@ -86,8 +89,9 @@ public class LightBikeGame {
 		
 	// USER Info Display
 	private static HUD HUD = null;
+
 	private static Model BikeModel = null;
-		
+	public int aBikeRes = R.raw.lightcycle_high;	
 	
 	public Segment aWalls[] = null;
 	
@@ -108,7 +112,11 @@ public class LightBikeGame {
 	
 	private OpenGLRenderer aCustomRenderer = null;
 	private Context aContext = null;
-			
+
+	public boolean aActBoost = false;
+	public boolean aActBrake = false;
+	public boolean aActSpecial = false;
+	
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
 		aCustomRenderer = rgl;
@@ -286,7 +294,7 @@ public class LightBikeGame {
 	    
 	    if (checkModelRebuild()) {
 	    	// Load Models
-	    	BikeModel = new Model(aContext, R.raw.lightcyclehigh); // SOMEDAY SEVERAL MODELS ;-)
+	    	BikeModel = new Model(aContext, aBikeRes); // SOMEDAY SEVERAL MODELS ;-)
 	    	aTrackRenderer = new TrackRenderer();
 	    	aTrackManager = new TrackManager(MAX_PLAYERS, aTrackRenderer);
 	    }
@@ -308,7 +316,14 @@ public class LightBikeGame {
 	    aColor0 = aPrefs.playerColor();
 	    aSpeed0 = aPrefs.speed();
 		for (int plyr = 0; plyr < aNbPlayers0; plyr++) {
-			aPlayers[plyr] = new Player(aTrackManager, plyr, aGrideSize0, aSpeed0, aColor0);
+			Player curPlayer = new Player(aTrackManager, plyr, aGrideSize0, aSpeed0, aColor0);
+			if (plyr == LightBikeGame.OWN_PLAYER) {
+				curPlayer.aPower = aPowerBonus + aPowerBonus0;
+			}
+			else {
+				curPlayer.aPower = aPowerBonus + aPowerBonus0;
+			}
+			aPlayers[plyr] = curPlayer;
 		}
 		
 		ComputerAI.initAI2(aWalls, aPlayers, aGrideSize0);
@@ -400,14 +415,33 @@ public class LightBikeGame {
 		}
 		else if (isPlayActive) {
 			// GAME PLAY
-			// TURN LEFT OR RIGHT
-			if (x <= (aVisual._iwidth / 2)) {
-				inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
+			
+			// bottom 2/3 screen
+			// avoid android back button
+			if (y > aVisual._iheight *0.3f) {
+				// TURN LEFT OR RIGHT
+				if (x < (aVisual._iwidth * 1/5)) {
+					inputDirection = aPlayers[OWN_PLAYER].TURN_LEFT;
+					aIsProcessInput = true;
+				}
+				else if (x > (aVisual._iwidth * 4/5)) {
+					inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
+					aIsProcessInput = true;
+				}
+				else if (x < (aVisual._iwidth * 2/5)) {
+					aActBrake = true;
+				}
+				else if (x > (aVisual._iwidth * 3/5)) {
+					aActBoost = true;
+				}
+				else {
+					// middle button
+					aActSpecial = true;
+				}
 			}
 			else {
-				inputDirection = aPlayers[OWN_PLAYER].TURN_RIGHT;
+				aActSpecial = true;
 			}
-			aIsProcessInput = true;
 		}
 		else {
 			long endAnim = 2000; // 2 seconds
@@ -428,12 +462,44 @@ public class LightBikeGame {
 			prepareNewGame();
 		}
 		else if (isPlayActive) {
+			Player userP = aPlayers[OWN_PLAYER];
 			if (aIsProcessInput) {
-				Player userP = aPlayers[OWN_PLAYER];
 				if (userP != null) 
 					userP.doTurn(inputDirection, aTimeNow);
 				aIsProcessInput = false;
 			}
+			
+			if (aActBoost) {
+				if ((userP != null) && (userP.aPower >1)) {
+					userP.aPower-=1;
+					userP.aSpeed*=1.2;
+				}
+				aActBoost=false;
+			}
+			else if (aActBrake) {
+				if ((userP != null) && (userP.aPower >1)) {
+					if (userP.aSpeed > aSpeed0) {
+						userP.aPower-=1;
+						userP.aSpeed*=.9;
+					}
+				}
+				aActBrake=false;
+			}
+			else if (aActSpecial) {
+				if ((userP != null) && (userP.aPower >0)) {
+					// MAX Power Bonus
+					userP.doSpecial(aPowerBonus0, aTimeNow);
+				}
+				aActSpecial=false;
+			}
+			
+			if (userP != null) {
+				if (userP.aPower < 0) {
+					userP.aPower=0;
+					userP.aIsCrash=true;
+				}
+			}
+			
 			// don't activate bots if game not started			
 			playAI();
 		}
@@ -724,6 +790,8 @@ public class LightBikeGame {
 		aCam.setTravelling(false);
 		// stop speed
 		aPlayers[OWN_PLAYER].setSpeed(0.0f);
+		// increase power from game to game
+		aPowerBonus = 100 + aPlayers[OWN_PLAYER].aPower;
 		if (winner) {
 			HUD.displayWin();
 		}
@@ -786,7 +854,7 @@ public class LightBikeGame {
 	public long getPower (int player) {
 		long res = 0;
 		//FIXME
-		res = aPlayers[OWN_PLAYER].getPower();
+		res = aPlayers[OWN_PLAYER].aPower;
 		return res;
 	}
 	public long getGcMemory () {
