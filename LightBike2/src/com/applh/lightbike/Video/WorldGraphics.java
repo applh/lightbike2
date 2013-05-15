@@ -274,7 +274,7 @@ public class WorldGraphics {
 
 		for (int i=0; i<6; i++)
 		{
-			GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdSkyBox(i));
+			GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdSkybox(i));
 			
 			GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
 			GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);

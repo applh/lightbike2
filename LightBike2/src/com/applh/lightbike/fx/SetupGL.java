@@ -35,11 +35,25 @@ public class SetupGL {
 	private static int aTexIdWall3;
 	private static int aTexIdWall4;
 	private static int aTexIdFloor;
+
+	private static int aGSetSkybox1;
+	private static int aGSetSkybox2;
+	private static int aGSetSkybox3;
+	private static int aGSetSkybox4;
+	private static int aGSetSkyboxB;
+	private static int aGSetSkyboxT;
+	
+	private static int aTexIdSkybox1;
+	private static int aTexIdSkybox2;
+	private static int aTexIdSkybox3;
+	private static int aTexIdSkybox4;
+	private static int aTexIdSkyboxB;
+	private static int aTexIdSkyboxT;
 	
 	// Textures
 	private static GLTexture SplashTex = null;
 	private static GLTexture ExplodeTex = null;
-	private static GLTexture SkyBoxTex[] = null; 
+//	private static GLTexture SkyBoxTex[] = null; 
 
 	private static int TexIdExplode = -1;
 	
@@ -86,7 +100,7 @@ public class SetupGL {
 		
 		// reinit textures as context changed
 		SplashTex = null;
-		SkyBoxTex = null; 
+//		SkyBoxTex = null; 
 
 		ExplodeTex = null;
 		TexIdExplode = -1;
@@ -153,6 +167,7 @@ public class SetupGL {
 	public static void PrepareNewGame2 () {
 		PrepareTexWalls();
 		PrepareTexFloor();
+		PrepareTexSkybox();
 	}
 	
 	public static void PrepareTexFloor () {
@@ -162,7 +177,7 @@ public class SetupGL {
 
 	public static void PrepareTexWalls () {
 		// FIXME
-		int w = aRand.nextInt(3);
+		int w = aRand.nextInt(4);
 		aGSetWall1 = w*4;
 		aGSetWall2 = w*4 +1;
 		aGSetWall3 = w*4 +2;
@@ -173,7 +188,25 @@ public class SetupGL {
 		aTexIdWall3 = aGSet.getTexIdWall(aGSetWall3);
 		aTexIdWall4 = aGSet.getTexIdWall(aGSetWall4);
 	}	
-	
+
+	public static void PrepareTexSkybox () {
+		// FIXME
+		int w = aRand.nextInt(3);
+		aGSetSkybox1 = w*6;
+		aGSetSkybox2 = w*6 +1;
+		aGSetSkybox3 = w*6 +2;
+		aGSetSkybox4 = w*6 +3;
+		aGSetSkyboxB = w*6 +4;
+		aGSetSkyboxT = w*6 +5;
+		
+		aTexIdSkybox1 = aGSet.getTexIdSkybox(aGSetSkybox1);
+		aTexIdSkybox2 = aGSet.getTexIdSkybox(aGSetSkybox2);
+		aTexIdSkybox3 = aGSet.getTexIdSkybox(aGSetSkybox3);
+		aTexIdSkybox4 = aGSet.getTexIdSkybox(aGSetSkybox4);
+		aTexIdSkyboxB = aGSet.getTexIdSkybox(aGSetSkyboxB);
+		aTexIdSkyboxT = aGSet.getTexIdSkybox(aGSetSkyboxT);
+	}	
+
 	public static void PushTexFilter (int minFilter, int maxFilter) {
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MIN_FILTER, minFilter);
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MAG_FILTER, maxFilter);
@@ -183,8 +216,8 @@ public class SetupGL {
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MIN_FILTER, aMinFilter);
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MAG_FILTER, aMaxFilter);
 	}
-	
-	public static GLTexture[] GetSkyBoxTex () {
+/*	
+	public static GLTexture[] GetSkyBoxTex2 () {
 		if (SkyBoxTex == null) {
 			GLTexture tabTex[] = { 
 				new GLTexture(aContext, R.drawable.skybox0),
@@ -197,7 +230,7 @@ public class SetupGL {
 		}
 		return SkyBoxTex;
 	}
-	
+*/	
 
 	public static GLTexture GetExplodeTex () {
 		if (ExplodeTex == null) {
@@ -215,7 +248,7 @@ public class SetupGL {
 	public static int GetTexIdFloor () {
 		return aTexIdFloor;
 	}
-
+/*
 	public static int GetTexIdSkyBox_DEV (int b) {
 		int res = -1;
 		if (SkyBoxTex == null) {
@@ -235,15 +268,14 @@ public class SetupGL {
 		}
 		return res;
 	}
-
 	public static int GetTexIdSkyBox(int b) {
 		int res = -1;
 		if (SkyBoxTex == null) {
 			GLTexture tabTex[] = { 
-				new GLTexture(aContext, R.drawable.skybox_0, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, R.drawable.skybox_1, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, R.drawable.skybox_2, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, R.drawable.skybox_3, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
+				new GLTexture(aContext, aTexIdSkybox1, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
+				new GLTexture(aContext, aTexIdSkybox2, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
+				new GLTexture(aContext, aTexIdSkybox3, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
+				new GLTexture(aContext, aTexIdSkybox4, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
 		 		new GLTexture(aContext, R.drawable.skybox_bottom, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
 				new GLTexture(aContext, R.drawable.skybox_top, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true) };
 			SkyBoxTex = tabTex;
@@ -255,6 +287,7 @@ public class SetupGL {
 		}
 		return res;
 	}
+*/
 	
 	public static int GetTexIdWalls (int w) {
 		int res = 0;
@@ -277,7 +310,35 @@ public class SetupGL {
 		}
 		return res;
 	}
-	
+
+	public static int GetTexIdSkybox (int w) {
+		int res = 0;
+		switch (w) {
+		case 0:
+			res = aTexIdSkybox1;
+			break;
+		case 1:
+			res = aTexIdSkybox2;
+			break;
+		case 2:
+			res = aTexIdSkybox3;
+			break;
+		case 3:
+			res = aTexIdSkybox4;
+			break;
+		case 4:
+			res = aTexIdSkyboxB;
+			break;
+		case 5:
+			res = aTexIdSkyboxT;
+			break;
+		default:
+			res = aTexIdSkybox1;
+			break;
+		}
+		return res;
+	}
+
 	public static Font GetFont () {
 		if (aXenoFont == null) {
 			aXenoFont = new Font(aContext, R.drawable.xenotron0, R.drawable.xenotron1);
