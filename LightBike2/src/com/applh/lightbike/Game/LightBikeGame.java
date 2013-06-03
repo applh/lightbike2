@@ -23,6 +23,7 @@
 package com.applh.lightbike.Game;
 
 import android.opengl.GLES11;
+import android.util.FloatMath;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -40,6 +41,9 @@ import com.applh.lightbike.matrix.Vector3;
 
 
 public class LightBikeGame {
+	
+	
+	public ComputerAI aComputerAI=null;
 	
 	public int aPowerBonus = 100;
 	public int aPowerBonus0 = 100;
@@ -116,7 +120,14 @@ public class LightBikeGame {
 	public boolean aActBoost = false;
 	public boolean aActBrake = false;
 	public boolean aActSpecial = false;
-	
+
+	public static final int LOD_DIST[][] = {
+		{1000, 1000, 1000 },
+		{100,  200,  400},
+		{30,   100,  200},
+		{10,   30,   150}
+	};
+
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
 		aCustomRenderer = rgl;
@@ -147,6 +158,7 @@ public class LightBikeGame {
 		aCam = null;
 		aCamType0 = Camera.CamType.E_CAM_TYPE_FOLLOW_CLOSE;
 		
+		aComputerAI = null;
 		aTrackRenderer = null;
 		
 		// input processing FIXME make enum type instead of bunch of flags
@@ -298,6 +310,9 @@ public class LightBikeGame {
 	    	aTrackRenderer = new TrackRenderer();
 	    	aTrackManager = new TrackManager(MAX_PLAYERS, aTrackRenderer);
 	    }
+
+	    if (aComputerAI == null)
+	    	aComputerAI = new ComputerAI();
 
 	    if (aTrackManager != null)
 	    	aTrackManager.reset();
@@ -456,7 +471,7 @@ public class LightBikeGame {
 		
 		// UPDATE TIME
 		updateTime0();
-		ComputerAI.updateTime(aTimeNow);
+		aComputerAI.updateTime(aTimeNow);
 
 		if (aIsGameReset) {
 			prepareNewGame();
@@ -510,10 +525,17 @@ public class LightBikeGame {
 	}
 
 	private void playAI () {
+		
+		if (aCurrentBikes < 3) {
+			// more agressivity at the end
+			aComputerAI.SAVE_T_DIFF =  (2 - aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.SAVE_T_DIFF0;
+			aComputerAI.HOPELESS_T =  (aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.HOPELESS_T0;
+		}
+		
 		// round robin AI to speed up frame time
 		Player bot = aPlayers[aiCount]; 
     	if ((bot != null) && !bot.isCrashed())	{
-			ComputerAI.doComputer(aiCount, OWN_PLAYER);
+			aComputerAI.doComputer(aiCount, OWN_PLAYER);
 		}
        	aiCount++;
     	
@@ -596,7 +618,7 @@ public class LightBikeGame {
 			movePlayers();
 
 			// DRAW ALL ELEMENTS
-			drawNextFrame2();
+			drawNextFrame();
 			
 			// Check if Game has finished
 			checkGameEnd();
@@ -649,6 +671,9 @@ public class LightBikeGame {
 				}
 			}				
 		}
+		
+		aPlayers[OWN_PLAYER].updatePowerMax();
+		
 		// if game has started
 		if (!boOwnPlayerActive && boOtherPlayersActive) {
 			setGameEnd(false);
@@ -714,7 +739,7 @@ public class LightBikeGame {
 		// LH HACK
 		// draw each bike and trail
 		for (int player = 0; player < aNbPlayers0; player++) {
-			if (player == OWN_PLAYER || aPlayers[player].isVisible(aCam)) {
+			if (player == OWN_PLAYER || isVisible(aPlayers[player], aCam)) {
 				// DRAW BIKE
 				// SMALL LEAKS
 				aPlayers[player].drawCycleFast(aTimeNow, aFrameDT);
@@ -722,11 +747,66 @@ public class LightBikeGame {
 		}
 	}
 
+	
+	public boolean isVisible (Player player, Camera cam)
+	{
+		if (curFPS > 50) return true;		
 		
-	private void drawNextFrame2 () {
+		Vector3 v1;
+		Vector3 v2;
+		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f);
+		int lod_level = 2;
+
+		if (curFPS > 40) lod_level=1;
+
+		float d,s;
+		int i;
+		int LC_LOD = 3;
+		float fov = 120;
+		
+		boolean retValue;
+		
+		v1 = cam._target.sub(cam._cam);
+		v1.Normalise();
+		
+		v2 = cam._cam.sub(tmp);
+		
+		d = v2.Length();
+		
+		for (i=0; (i<LC_LOD) && (d >= LOD_DIST[lod_level][i]); i++);
+		
+		if (i >= LC_LOD) {
+			retValue = false;
+		}
+		else {
+			v2 = tmp.sub(cam._cam);
+			v2.Normalise();
+			
+			s = v1.Dot(v2);
+			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
+			
+			if (s < d - (LightBikeGame.GetBikeBBoxRadius(player.aPlayerID) * 2.0f)) {
+				retValue = false;
+			}
+			else {
+				retValue = true;
+			}
+			
+		}
+		
+		return retValue;
+	}
+	
+
+		
+	private void drawNextFrame () {
 
 		// START DRAWING NEW FRAME
-		
+		if (curFPS > 20) 
+			aTrackRenderer.aAlphaMin=0.0f;
+		else
+			aTrackRenderer.aAlphaMin=1.0f;
+			
 		// camera follow player bike
 		aCam.doCameraMovement(aPlayers[OWN_PLAYER], aTimeNow, aFrameDT);
 		
@@ -739,14 +819,23 @@ public class LightBikeGame {
 		for (int player = 0; player < aNbPlayers0; player++) {
 			Player curP = aPlayers[player];
 			//if (player == OWN_PLAYER || aPlayers[player].isVisible(aCam)) {
-			if (!curP.isCrashed() && curP.isVisible(aCam)) {
+			if (!curP.isCrashed() && isVisible(curP, aCam)) {
 				// DRAW BIKE	
 				curP.drawCycleFast(aTimeNow, aFrameDT);
 			}
-			curP.drawActiveTracks(aTrackRenderer, aCam);
+			drawActiveTracks(curP, aTrackRenderer, aCam);
 		}
 
 	}
+
+	public void drawActiveTracks (Player player, TrackRenderer render, Camera cam)
+	{
+		if (player.aTrailHeight > 0.0f) {
+			if (render != null) {
+				render.drawTracks(player.tabTracks, player.aTrailOffset, player.aTrailHeight, player.mPlayerColourDiffuse);
+			}
+		}
+	}	
 
 	private void drawNextFrameFinish () {
 
@@ -765,7 +854,7 @@ public class LightBikeGame {
 				curP.drawCycleFast(aTimeNow, aFrameDT);
 			}
 			// DRAW TRAIL
-			curP.drawActiveTracks(aTrackRenderer, aCam);
+			drawActiveTracks(curP, aTrackRenderer, aCam);
 		}
 
 		aTrackManager.drawFrameOldTracks(0);
@@ -790,10 +879,15 @@ public class LightBikeGame {
 		aCam.setTravelling(false);
 		// stop speed
 		aPlayers[OWN_PLAYER].setSpeed(0.0f);
-		// increase power from game to game
-		aPowerBonus = 100 + aPlayers[OWN_PLAYER].aPower;
 		if (winner) {
+			// increase power from game to game
+			aPowerBonus = 100 + aPlayers[OWN_PLAYER].aPower;
+
 			HUD.displayWin();
+			
+			// save the max score
+			if (aPrefs != null) 
+				aPrefs.saveMaxPower(aPlayers[OWN_PLAYER].aPowerMax);
 		}
 		else {
 			HUD.displayLose();
@@ -806,6 +900,17 @@ public class LightBikeGame {
 			if (player < aScores.length)
 				res = aScores[player];
 		}
+		return res;
+	}
+	
+	public long getMaxPower (int player) {
+		long res=200;
+		
+		if (aPrefs != null)
+			res=aPrefs.aPowerMax;
+		else if (isPlayActive) 
+			res=aPlayers[OWN_PLAYER].aPowerMax;
+
 		return res;
 	}
 	

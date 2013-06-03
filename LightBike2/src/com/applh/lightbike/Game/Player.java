@@ -12,31 +12,30 @@ package com.applh.lightbike.Game;
 import java.util.Random;
 
 import android.opengl.GLES11;
-import android.util.FloatMath;
 
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.fx.Explosion;
-import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
 
 	public int aPower = 0;
+	public int aPowerMax = 0;
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
 	public boolean aIsCrash;
 
 	public float aGridSize;
 	
-	private int aPlayerID;
+	public int aPlayerID;
 	private int Direction;
 	private int LastDirection;
 	
 	private int Score;
 	
 	private TrackManager aTrackManager;
-	private final int MaxTracks = 100;
-	private BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
+	public final int MaxTracks = 100;
+	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
 	private int aDamageMin = 5;
 	private int aDamageRange = 20;
@@ -44,7 +43,7 @@ public class Player {
 	private float aCrashRotationZ = 0;
 	
 	public int aTrailOffset;
-	private float aTrailHeight;
+	public float aTrailHeight;
 	
 	private float aSpeedRef;
 	private int aSpeedKmh;	
@@ -112,13 +111,13 @@ public class Player {
 
 	
 //	private final int MAX_LOD_LEVEL = 3;
-	private static final int LOD_DIST[][] = {
+/*	public static final int LOD_DIST[][] = {
 			{ 1000, 1000, 1000 },
 			{100, 200, 400},
 			{30,100,200},
 			{10,30,150}
 	};
-	
+*/
 	public Player (TrackManager manager, int player_number, float gridSize, float speed, int colorPref)
 	{
 		// when power = 0, Bike is crashed 
@@ -667,6 +666,7 @@ public class Player {
 		}
 	}
 
+	/*	
 	public void drawActiveTracks (TrackRenderer render, Camera cam)
 	{
 		if (aTrailHeight > 0.0f) {
@@ -675,7 +675,6 @@ public class Player {
 			}
 		}
 	}	
-	
 	public boolean isVisible (Camera cam)
 	{
 		Vector3 v1;
@@ -719,7 +718,7 @@ public class Player {
 		
 		return retValue;
 	}
-	
+*/	
 	private float getDirAngle (long time)
 	{
 		int last_dir;
@@ -847,4 +846,9 @@ public class Player {
 	public boolean isCrashed () {
 		return aIsCrash;
 	}
+	
+	public void updatePowerMax () {
+		if (aPower > aPowerMax) aPowerMax = aPower;
+	}
+	
 }

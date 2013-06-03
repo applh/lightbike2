@@ -56,8 +56,11 @@ public class ComputerAI {
 	private static int tdiff[];// = {0,0,0,0,0,0,0,0,0,0,0,0};
 	private static long aiTime[]; // = {0,0,0,0,0,0,0,0,0,0,0,0};
 	
-	private static float SAVE_T_DIFF = 0.500f;
-	private static float HOPELESS_T = 0.80f;
+	public float SAVE_T_DIFF0 = 0.500f;
+	public float SAVE_T_DIFF = 0.500f;
+	
+	public float HOPELESS_T0 = 0.80f;
+	public float HOPELESS_T = 0.80f;
 	
 	private static float aDistanceAct;
 	
@@ -115,18 +118,18 @@ public class ComputerAI {
 
 	}
 	
-	public static void updateTime (long current)
+	public void updateTime (long current)
 	{
 //		Dt = dt;
 		Current = current;
 	}
 	
-	public static void doComputer (int player, int target)
+	public void doComputer (int player, int target)
 	{
 		int closestOpp;
 		
 		// avoid short turns
-		if((Current - aiTime[player]) < MIN_TURN_TIME[TURN_TIME_LEVEL])
+		if ((Current - aiTime[player]) < MIN_TURN_TIME[TURN_TIME_LEVEL])
 			return;
 
 		calculateDistances(player);
@@ -141,7 +144,7 @@ public class ComputerAI {
 		
 	}
 	
-	private static void doComputerActive(int plyr, int target)
+	private void doComputerActive (int plyr, int target)
 	{
 		int location = -1;
 		float t_player, t_opponent;
@@ -231,21 +234,21 @@ public class ComputerAI {
 		switch(location) {
 			case 0: case 7:
 			case 1: case 6:
-				if(t_player < t_opponent) {
+				if (t_player < t_opponent) {
 					// boost stuff
 					//if(t_player - t_opponent < SAVE_T_DIFF)
-					ai_aggressive(plyr,target,location);	
+					ai_aggressive(plyr, target, location);	
 				}
 				else {
-					if(t_opponent < HOPELESS_T) {
-						ai_evasive(plyr,target,location);
+					if (t_opponent < HOPELESS_T) {
+						ai_evasive(plyr, target, location);
 					}
-					else if(t_opponent - t_player < SAVE_T_DIFF) {
+					else if (t_opponent - t_player < SAVE_T_DIFF) {
 						// boost
-						ai_aggressive(plyr,target,location);
+						ai_aggressive(plyr, target, location);
 					}
 					else {
-						ai_evasive(plyr,target,location);
+						ai_evasive(plyr, target, location);
 					}
 				}
 				break;

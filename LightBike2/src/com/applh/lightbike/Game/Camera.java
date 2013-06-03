@@ -43,7 +43,7 @@ public class Camera {
 	
 	private long _steadyCount = 0;
 	private long _steadyCountMax = 100;
-	private long _deltaR = 1;
+	private long _deltaR = -1;
 	private volatile boolean _isTravelling = true;
 	
 	// LH TODO: review interdependence
@@ -248,7 +248,7 @@ public class Camera {
 				// prepare next frame ?
 				// change the angle PHI value for CIRCLING CAMERA
 				//_movement[CAM_PHI] += CAM_SPEED * dt;
-				_movement[CAM_PHI] += CAM_SPEED * dt;
+				_movement[CAM_PHI] -= CAM_SPEED * dt;
 								
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
@@ -332,9 +332,9 @@ public class Camera {
 						_steadyCount = 0;
 						Random rand = new Random();
 						if (_deltaR > 0)
-							_steadyCountMax = 1000 + rand.nextInt(200);
+							_steadyCountMax = 1000 + rand.nextInt(150);
 						else 
-							_steadyCountMax = 50 + rand.nextInt(100);
+							_steadyCountMax = 50 + rand.nextInt(150);
 					}					
 				}
 				// securised with CLAMP_R_MIN and CLAMP_R_MAX

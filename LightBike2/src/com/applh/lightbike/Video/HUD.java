@@ -20,7 +20,6 @@ package com.applh.lightbike.Video;
 import android.content.Context;
 import android.opengl.GLES11;
 
-import com.applh.lightbike.OpenGLRenderer;
 import com.applh.lightbike.Game.LightBikeGame;
 import com.applh.lightbike.fx.SetupGL;
 
@@ -75,7 +74,7 @@ public class HUD {
 	    emptyConsole();
 	    
 	    // FIXME
-	    aPower2ref = 200;
+	    aPower2ref = 100;
 	    aPower2display = aPower2ref;
 	    aPower2bike = aPower2ref;
 	    aPowerReset = true;
@@ -184,25 +183,20 @@ public class HUD {
 	
 	private void drawBottom ()
 	{
-		long score = game.getScore(LightBikeGame.OWN_PLAYER);				
-		long nbWalls = game.getTotalTrails();
-		long freeMem = game.getGcMemory();
+		long maxPower = game.getMaxPower(LightBikeGame.OWN_PLAYER);
 
 		aTextBottomL = String.format(
-				"SCORE:%d BIKES:%d", 
-				score, 
-				LightBikeGame.aCurrentBikes 
+				"HIGH SCORE:%d", 
+				maxPower
 				);
 		aTextBottomR = String.format(
-				"TRACKS:%d FB:%d RAM:%d", 
-				nbWalls, 
-				OpenGLRenderer.LastCountFB, 
-				freeMem 
+				"BIKES:%d", 
+				LightBikeGame.aCurrentBikes 
 				);
 		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(aMidX, 16, 16, aTextBottomR);
-		aXenoFont.drawText(16, 16, 24, aTextBottomL);
+		aXenoFont.drawText(16, 8, 16, aTextBottomL);
+		aXenoFont.drawText(aMidX, 8, 24, aTextBottomR);
 	}
 	
 	private void drawWinLose ()
@@ -306,18 +300,29 @@ public class HUD {
 				aPower2bike
 				);
 
-		float ratio = 1.0f - aPower2display/(1.0f * aPower2ref);
-		
+		float ratio = 0.0f;
 		float red = ratio;
 		float green = 1.0f - ratio;
 		float blue = (float) Math.sin((float) (ratio * Math.PI));
-		GLES11.glColor4f(red, green, blue, 1.0f);
+		
+		if (aPower2bike > aPower2ref) {
+			red = 0;
+			green = 1.0f;
+			blue = 0;
+			aPowerFont = aPowerFontMin;				
+		}
+		else {
+			ratio = 1.0f - aPower2bike/(1.0f * aPower2ref);
+			red = ratio;
+			green = 1.0f - ratio;
+			blue = (float) Math.sin((float) (ratio * Math.PI));
 
-		if (aPowerReset) {
-			aPowerFont = 24 + (int) (32 * (1.0f - aPower2bike/aPower2ref));
-			if (aPowerFont < aPowerFontMin) 
-				aPowerFont = aPowerFontMin;
-			
+			aPowerFont = aPowerFontMin + (int) (aPowerFontMin * (1.0f - aPower2bike/aPower2ref));				
+		}
+		if (aPowerFont < aPowerFontMin) 
+			aPowerFont = aPowerFontMin;
+		
+		if (aPowerReset) {			
 			aPowerX0 = 16;
 			aPowerY0 = game.aVisual._iheight - 55 - aPowerFont;
 			
@@ -326,6 +331,7 @@ public class HUD {
 			
 			aPowerReset = false;
 		}
+		GLES11.glColor4f(red, green, blue, 1.0f);
 
 		aXenoFont.drawText(aPowerX, aPowerY, aPowerFont, textPower);
 	}
@@ -338,12 +344,15 @@ public class HUD {
 		long fpsMaxPlay = game.getFPSmax();		
 		long playTime = game.getPlayTime() / 100;
 
+		long freeMem = game.getGcMemory();
+
 		String textFPS = String.format(
-				"TIME:%d FPS:%d/%d/%d/", 
+				"TIME:%d FPS:%d/%d/%d/ RAM:%d", 
 				playTime, 
 				fpsPlay, 
 				fpsAvgPlay, 
-				fpsMaxPlay
+				fpsMaxPlay,
+				freeMem
 				);
 		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);

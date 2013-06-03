@@ -61,6 +61,8 @@ public class UserPrefs {
 	private float aSpeed;
 	private int aPlayerColor;
 	
+	public int aPowerMax=0;
+	
 	public UserPrefs (Context ctx)
 	{
 		aContext = ctx;
@@ -76,6 +78,8 @@ public class UserPrefs {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(aContext);
 		cameraType = Integer.valueOf(prefs.getString("cameraPref", C_DEFAULT_CAM_TYPE));
 
+		aPowerMax = Integer.valueOf(prefs.getString("powerMax", "200"));
+		
 		switch(cameraType)
 		{
 			case C_PREF_FOLLOW_CAM:
@@ -117,6 +121,16 @@ public class UserPrefs {
 		mFPS = prefs.getBoolean("fpsOption", true);
 		speedIndex = Integer.valueOf(prefs.getString("gameSpeed", "1"));
 		aSpeed = C_SPEED[speedIndex];
+	}
+	
+	public void saveMaxPower (int power) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(aContext);
+		aPowerMax = Integer.valueOf(prefs.getString("powerMax", "200"));
+		if (aPowerMax < power) {
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString("powerMax", ""+power);
+			editor.commit();
+		}
 	}
 	
 	public Camera.CamType CameraType()
