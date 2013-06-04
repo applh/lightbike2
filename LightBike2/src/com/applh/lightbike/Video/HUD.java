@@ -32,6 +32,10 @@ public class HUD {
 	public int aPowerFontMin = 24;
 	public int aPowerFont = 24;
 
+	public int aFont0 = 32;
+	public int aFont1 = 24;
+	public int aFont2 = 16;
+
 	private static Font aXenoFont = null;
 
 	// console members
@@ -78,6 +82,22 @@ public class HUD {
 	    aPower2display = aPower2ref;
 	    aPower2bike = aPower2ref;
 	    aPowerReset = true;
+	    
+	    // setting font size
+	    // 720 => 16, 768 => 16, 1080 => 32
+	    if (game.aVisual._iheight > 1000) {
+	    	aFont0 = 40;
+		    aFont1 = 32;
+	    	aFont2 = 24;
+	    }
+	    else {
+	    	aFont0 = 32;
+		    aFont1 = 24; 	    	
+		    aFont2 = 16;
+	    }
+	    
+	    aPowerFont = aFont1;
+	    aPowerFontMin = aFont1;
 	}
 	
 
@@ -115,7 +135,8 @@ public class HUD {
 		
 		drawConsole();
 		drawInstructions();
-
+		drawCursor();
+		
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 
 	}
@@ -172,13 +193,22 @@ public class HUD {
 	public void drawCommands () 
 	{
 		int x8 = aMidX / 5;
-		
+		int ts = aFont0 * 3 / 2;
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(1*x8 -48, 48, 32, "==\\");
-		aXenoFont.drawText(3*x8 -48, 48, 32, "(-)");	
-		aXenoFont.drawText(5*x8 -48, 48, 32, "(o)");	
-		aXenoFont.drawText(7*x8 -48, 48, 32, "(+)");	
-		aXenoFont.drawText(9*x8 -48, 48, 32, "/==");	
+		aXenoFont.drawText(1*x8 -ts, ts, aFont0, "==\\");
+		aXenoFont.drawText(3*x8 -ts, ts, aFont0, "(-)");	
+		aXenoFont.drawText(5*x8 -ts, ts, aFont0, "(0)");	
+		aXenoFont.drawText(7*x8 -ts, ts, aFont0, "(+)");	
+		aXenoFont.drawText(9*x8 -ts, ts, aFont0, "/==");	
+	}
+
+	public void drawCursor () 
+	{
+		int x=(int) game.aMoveX;
+		int y=(int) game.aVisual._iheight - (int) game.aMoveY;
+		int s=aFont0;
+		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
+		aXenoFont.drawText(x, y, s, "*");
 	}
 	
 	private void drawBottom ()
@@ -193,10 +223,10 @@ public class HUD {
 				"BIKES:%d", 
 				LightBikeGame.aCurrentBikes 
 				);
-		
+				
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(16, 8, 16, aTextBottomL);
-		aXenoFont.drawText(aMidX, 8, 24, aTextBottomR);
+		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
+		aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
 	}
 	
 	private void drawWinLose ()
@@ -226,22 +256,30 @@ public class HUD {
 	private void drawInstructions ()
 	{		
 		if (dispInst) {
+			String str0 = null;
 			String str1 = null;
 			String str2 = null;
-			str1 = "[+] TOUCH SCREEN TO START [+]";
-			str2 = ". . . or press menu key for settings . . .";
+			str0 = " [+]        [+] ";
+			str1 = "        TOUCH BIKE TO START        ";
+			str2 = "        or press [here] for settings        ";
 			
 			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			
 			aXenoFont.drawText(
 					5,
-					game.aVisual._vp_h / 4,
+					game.aVisual._vp_h / 2,
+					(game.aVisual._vp_w / (6 / 4 * str0.length())),
+					str0);
+
+			aXenoFont.drawText(
+					5,
+					game.aVisual._vp_h / 3,
 					(game.aVisual._vp_w / (6 / 4 * str1.length())),
 					str1);
 			
 			aXenoFont.drawText(
 					5,
-					game.aVisual._vp_h / 8,
+					game.aVisual._vp_h / 7,
 					(game.aVisual._vp_w / (6/4 * str2.length())),
 					str2);
 				
@@ -260,9 +298,8 @@ public class HUD {
 			//index = (position + i - lines - offset + CONSOLE_DEPTH) % CONSOLE_DEPTH;
 			int i1 = (i0 + i) % consoleBuffer.length;
 			if (consoleBuffer[i1] != null) {
-				int size = 24;								
 				GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-				aXenoFont.drawText(16, game.aVisual._iheight - 20 * (i + 1), size, consoleBuffer[i1]);
+				aXenoFont.drawText(16, game.aVisual._iheight - 20 * (i + 1), aFont1, consoleBuffer[i1]);
 			}
 		}
 	}
@@ -356,6 +393,6 @@ public class HUD {
 				);
 		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(aMidX, game.aVisual._iheight - 20, 16, textFPS);
+		aXenoFont.drawText(aMidX, game.aVisual._iheight - aFont1, aFont2, textFPS);
 	}
 }

@@ -27,8 +27,10 @@ import android.util.FloatMath;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
+
 import com.applh.lightbike2.R;
 
+import com.applh.lightbike.LightBike;
 import com.applh.lightbike.OpenGLRenderer;
 import com.applh.lightbike.Game.Camera.CamType;
 //import com.applh.lightbike.Sound.SoundManager;
@@ -121,6 +123,12 @@ public class LightBikeGame {
 	public boolean aActBrake = false;
 	public boolean aActSpecial = false;
 
+	
+	public float aMoveX=-1.0f;
+	public float aMoveY=-1.0f;
+	public float aMoveDX=0;
+	public float aMoveDY=0;
+	
 	public static final int LOD_DIST[][] = {
 		{1000, 1000, 1000 },
 		{100,  200,  400},
@@ -412,21 +420,47 @@ public class LightBikeGame {
 		}
 	}
 	
+	public void sendMoveEvent (float x, float y)
+	{
+		if (aMoveX >0) {
+			aMoveDX=x-aMoveX;
+			aMoveDX=y-aMoveY;
+		}
+		aMoveX=x;
+		aMoveY=y;
+	}
+	
 	public void sendTouchEvent (float x, float y)
 	{
 		if (!aIsReady)
 			return;
 		
 		if (aIsHome) {
-			setGameStart();
 			
-			// Change the camera and start movement.
-			aCam = new Camera(aPlayers[OWN_PLAYER], aCamType0);
+			boolean actStartGame=false;
 			
-			// remove instructions
-			HUD.displayInstr(false);
-			// set flags to game start
-			aIsHome = false;
+			if ((x > (aVisual._iwidth * 0.25f)) && (x < (aVisual._iwidth * 0.75f))) {
+				if ((y > aVisual._iheight *0.25f) && (y < aVisual._iheight *0.75f)) {
+						actStartGame=true;
+				}
+				else if ((y > aVisual._iheight *0.75f) && (y < aVisual._iheight *0.9f)) {
+		        	// OPEN THE SETTINGS MENU
+					LightBike lba = (LightBike) aContext;
+		        	lba.startPreferences();
+				}
+			}
+			
+			if (actStartGame) {
+				setGameStart();
+				
+				// Change the camera and start movement.
+				aCam = new Camera(aPlayers[OWN_PLAYER], aCamType0);
+				
+				// remove instructions
+				HUD.displayInstr(false);
+				// set flags to game start
+				aIsHome = false;
+			}
 		}
 		else if (isPlayActive) {
 			// GAME PLAY

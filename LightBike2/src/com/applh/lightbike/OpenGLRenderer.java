@@ -63,7 +63,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 		if (aGame != null) 
 			aGame.sendTouchEvent(x, y);
 	}
-	
+
+	public void onMove (float x, float y) {
+		if (aGame != null) 
+			aGame.sendMoveEvent(x, y);
+	}
+
 	public void onPause () {
 		aIsGamePause = true;
 		if (aGame != null) 
