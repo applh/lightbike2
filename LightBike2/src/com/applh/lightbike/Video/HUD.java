@@ -123,10 +123,11 @@ public class HUD {
 	
 	public void drawInfoHome ()
 	{
-		//GLES11.glDisable(GLES11.GL_DEPTH_TEST);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+		GLES11.glEnable(GLES11.GL_BLEND);
 		game.aVisual.rasonly();
 				
+
 		// Draw fps
 		if(dispFPS)
 			drawFPS();
@@ -135,6 +136,7 @@ public class HUD {
 		
 		drawConsole();
 		drawInstructions();
+
 		drawCursor();
 		
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
@@ -194,12 +196,14 @@ public class HUD {
 	{
 		int x8 = aMidX / 5;
 		int ts = aFont0 * 3 / 2;
+		int ts2 = 2*ts;
+		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(1*x8 -ts, ts, aFont0, "==\\");
-		aXenoFont.drawText(3*x8 -ts, ts, aFont0, "(-)");	
-		aXenoFont.drawText(5*x8 -ts, ts, aFont0, "(0)");	
-		aXenoFont.drawText(7*x8 -ts, ts, aFont0, "(+)");	
-		aXenoFont.drawText(9*x8 -ts, ts, aFont0, "/==");	
+		aXenoFont.drawText(1*x8 -ts, ts2, aFont0, "==\\");
+		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "(-)");	
+		aXenoFont.drawText(5*x8 -ts, ts2, aFont0, "(0)");	
+		aXenoFont.drawText(7*x8 -ts, ts2, aFont0, "(+)");	
+		aXenoFont.drawText(9*x8 -ts, ts2, aFont0, "/==");	
 	}
 
 	public void drawCursor () 
@@ -208,7 +212,7 @@ public class HUD {
 		int y=(int) game.aVisual._iheight - (int) game.aMoveY;
 		int s=aFont0;
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(x, y, s, "*");
+		aXenoFont.drawText(x, y, s, "+");
 	}
 	
 	private void drawBottom ()
@@ -219,11 +223,21 @@ public class HUD {
 				"HIGH SCORE:%d", 
 				maxPower
 				);
-		aTextBottomR = String.format(
-				"BIKES:%d", 
-				LightBikeGame.aCurrentBikes 
-				);
-				
+		if (LightBikeGame.aCurrentBikes > 2) {
+			aTextBottomR = String.format(
+					"YOU +%d BIKES", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+		}
+		else if (LightBikeGame.aCurrentBikes > 1) {
+			aTextBottomR = String.format(
+					"YOU +%d BIKE", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+		}
+		else {
+			aTextBottomR="";
+		}
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
 		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
 		aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
@@ -259,9 +273,9 @@ public class HUD {
 			String str0 = null;
 			String str1 = null;
 			String str2 = null;
-			str0 = " [+]        [+] ";
-			str1 = "        TOUCH BIKE TO START        ";
-			str2 = "        or press [here] for settings        ";
+			str0 = "[+]        [+]";
+			str1 = "        TOUCH YOUR BIKE TO START        ";
+			str2 = "                [options]                ";
 			
 			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			
@@ -299,7 +313,7 @@ public class HUD {
 			int i1 = (i0 + i) % consoleBuffer.length;
 			if (consoleBuffer[i1] != null) {
 				GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-				aXenoFont.drawText(16, game.aVisual._iheight - 20 * (i + 1), aFont1, consoleBuffer[i1]);
+				aXenoFont.drawText(16, game.aVisual._iheight - aFont1 * (i + 1), aFont1, consoleBuffer[i1]);
 			}
 		}
 	}
@@ -361,10 +375,10 @@ public class HUD {
 		
 		if (aPowerReset) {			
 			aPowerX0 = 16;
-			aPowerY0 = game.aVisual._iheight - 55 - aPowerFont;
+			aPowerY = (int) (game.aVisual._iheight * 0.60f);
 			
 			aPowerX = aMidX;
-			aPowerY = (int) (game.aVisual._iheight * 0.60);
+			aPowerY0 = (int) (game.aVisual._iheight - 5 * aFont1);
 			
 			aPowerReset = false;
 		}

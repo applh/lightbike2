@@ -395,8 +395,8 @@ public class Player {
 
 		updateBBox(getXpos(), getYpos());
 	}
-	
-	public void drawCycleFast (long curr_time, long time_dt)
+/*	
+	public void drawCycleFast2 (long curr_time, long time_dt)
 	{
 		GLES11.glPushMatrix();
 		GLES11.glTranslatef(getXpos(), getYpos(), 0.0f);
@@ -428,7 +428,7 @@ public class Player {
 
 		GLES11.glPopMatrix();		
 	}
-
+*/
 	public void doCrashTestWalls(Segment Walls[], long curTime)
 	{
 		Segment Current = tabTracks[aTrailOffset];
@@ -466,7 +466,7 @@ public class Player {
 					Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 					Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 					
-					doDamage(curTime);
+					doDamage(curTime, 0);
 					if (aPower > 0) {
 						aSpeed = aSpeedRef;
 					}
@@ -612,7 +612,7 @@ public class Player {
 								Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 								
 								// RANDOM DAMAGE
-								doDamage(curTime);
+								doDamage(curTime, testPlayer.aTrailOffset/4);
 								
 								// kamikaze counts
 								testPlayer.restartTrack(curTime);
@@ -641,13 +641,13 @@ public class Player {
 		aCrashRotationTTL++;				
 	}
 	
-	public void doDamage (long curTime) {
+	public void doDamage (long curTime, int extra) {
 		// CREATE EXPLOSION
 		Explosion.Create(this);
 
 		// RANDOM DAMAGE
 		Random rand = new Random();
-		int damage = aDamageMin + rand.nextInt(aDamageRange);							
+		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);							
 		aPower -= damage;
 
 		if (aPower <= 0)  {
@@ -740,7 +740,7 @@ public class Player {
 		return dir_angle;
 	}
 
-	private void doBikeRotation (long CurrentTime)
+	public void doBikeRotation (long CurrentTime)
 	{
 		  long time = CurrentTime - TurnTime;
 		  float dirAngle;

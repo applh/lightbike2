@@ -225,7 +225,7 @@ public class Model {
 		vec3 NormalArr[] = new vec3[mNormals.size()]; 
 		NormalArr = (vec3[])mNormals.toArray(NormalArr);
 		
-		for(int i=0;i<numOfVertices;i++) {
+		for (int i=0;i<numOfVertices;i++) {
 			for(int j=0;j<numOfNormals; j++) {
 				int vertex = lookup[i][j];
 				if(vertex != -1) {
@@ -251,7 +251,7 @@ public class Model {
 		ArrayList<short[]> Indices = new ArrayList<short[]>();
 		short tempIndices[];
 		
-		for(int i=0;i<numOfMaterials;i++) {
+		for (int i=0;i<numOfMaterials;i++) {
 			ByteBuffer ibb = ByteBuffer.allocateDirect(2 * 3 * MaterialsCount[i]);
 			ibb.order(ByteOrder.nativeOrder());
 			mIndicesBuffer[i] = ibb.asShortBuffer();
@@ -259,7 +259,7 @@ public class Model {
 			Indices.add(new short[MaterialsCount[i] * 3]);
 		}
 		
-		for(int i=0;i<numOfFaces;i++) {
+		for (int i=0;i<numOfFaces;i++) {
 			int materialtemp = faceArray[i].material;
 			tempIndices = (short[])Indices.get(materialtemp);
 			for(int j=0;j<3;j++) {

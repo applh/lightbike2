@@ -96,8 +96,11 @@ public class LightBikeGame {
 	// USER Info Display
 	private static HUD HUD = null;
 
-	private static Model BikeModel = null;
-	public int aBikeRes = R.raw.lightcycle_high;	
+	private Model aBikeModel0 = null;
+	private Model aBikeModel1 = null;
+	
+	public int aBikeRes0 = R.raw.lightcycle_high;	
+	public int aBikeRes1 = R.raw.lightcycle_med;	
 	
 	public Segment aWalls[] = null;
 	
@@ -180,7 +183,8 @@ public class LightBikeGame {
 					
 		// USER Info Display
 		HUD = null;
-		BikeModel = null;			
+		aBikeModel0 = null;			
+		aBikeModel1 = null;			
 		
 		aWalls = null;
 		
@@ -203,8 +207,16 @@ public class LightBikeGame {
 		return HUD;
 	}
 	
-	public static Model GetBike (int i) {
-		return BikeModel;
+	public Model GetBike (int i) {
+		Model res = aBikeModel0;
+		
+		if (i < 1) res = aBikeModel0;
+		else res = aBikeModel1;		
+		
+		if (curFPS < 20) res = aBikeModel1;
+		else if (curFPS > 50) res = aBikeModel0;
+		
+		return res;
 	}
 	
 	public boolean initGame2 () {
@@ -253,7 +265,8 @@ public class LightBikeGame {
 		boolean res = false;
 		// TO DO
 		// CHECK IF WORLD MUST BE REBUILD
-		if (BikeModel == null) res = true;
+		if (aBikeModel0 == null) res = true;
+		if (aBikeModel1 == null) res = true;
 		if (aTrackRenderer == null) res = true;
 		
 		return res;
@@ -314,7 +327,9 @@ public class LightBikeGame {
 	    
 	    if (checkModelRebuild()) {
 	    	// Load Models
-	    	BikeModel = new Model(aContext, aBikeRes); // SOMEDAY SEVERAL MODELS ;-)
+	    	aBikeModel0 = new Model(aContext, aBikeRes0); // SOMEDAY SEVERAL MODELS ;-)
+	    	aBikeModel1 = new Model(aContext, aBikeRes1); // SOMEDAY SEVERAL MODELS ;-)
+	    	
 	    	aTrackRenderer = new TrackRenderer();
 	    	aTrackManager = new TrackManager(MAX_PLAYERS, aTrackRenderer);
 	    }
@@ -562,8 +577,8 @@ public class LightBikeGame {
 		
 		if (aCurrentBikes < 3) {
 			// more agressivity at the end
-			aComputerAI.SAVE_T_DIFF =  (2 - aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.SAVE_T_DIFF0;
-			aComputerAI.HOPELESS_T =  (aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.HOPELESS_T0;
+			//aComputerAI.SAVE_T_DIFF =  (2 - aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.SAVE_T_DIFF0;
+			//aComputerAI.HOPELESS_T =  (aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.HOPELESS_T0;
 		}
 		
 		// round robin AI to speed up frame time
@@ -776,7 +791,7 @@ public class LightBikeGame {
 			if (player == OWN_PLAYER || isVisible(aPlayers[player], aCam)) {
 				// DRAW BIKE
 				// SMALL LEAKS
-				aPlayers[player].drawCycleFast(aTimeNow, aFrameDT);
+				drawCycleFast(aPlayers[player], aTimeNow, aFrameDT);
 			}
 		}
 	}
@@ -784,14 +799,14 @@ public class LightBikeGame {
 	
 	public boolean isVisible (Player player, Camera cam)
 	{
-		if (curFPS > 50) return true;		
+		if (curFPS > 35) return true;		
 		
 		Vector3 v1;
 		Vector3 v2;
 		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f);
 		int lod_level = 2;
 
-		if (curFPS > 40) lod_level=1;
+		if (curFPS > 35) lod_level=1;
 
 		float d,s;
 		int i;
@@ -819,7 +834,7 @@ public class LightBikeGame {
 			s = v1.Dot(v2);
 			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
 			
-			if (s < d - (LightBikeGame.GetBikeBBoxRadius(player.aPlayerID) * 2.0f)) {
+			if (s < d - (GetBikeBBoxRadius(player.aPlayerID) * 2.0f)) {
 				retValue = false;
 			}
 			else {
@@ -855,7 +870,7 @@ public class LightBikeGame {
 			//if (player == OWN_PLAYER || aPlayers[player].isVisible(aCam)) {
 			if (!curP.isCrashed() && isVisible(curP, aCam)) {
 				// DRAW BIKE	
-				curP.drawCycleFast(aTimeNow, aFrameDT);
+				drawCycleFast(curP, aTimeNow, aFrameDT);
 			}
 			drawActiveTracks(curP, aTrackRenderer, aCam);
 		}
@@ -885,9 +900,10 @@ public class LightBikeGame {
 			Player curP = aPlayers[player];
 			if (curP.getTrailHeight() > 0) {
 				// DRAW BIKE	
-				curP.drawCycleFast(aTimeNow, aFrameDT);
+				drawCycleFast(curP, aTimeNow, aFrameDT);
 			}
 			// DRAW TRAIL
+			aTrackRenderer.aAlphaMin=.8f;
 			drawActiveTracks(curP, aTrackRenderer, aCam);
 		}
 
@@ -1005,11 +1021,45 @@ public class LightBikeGame {
 		return res;
 	}
 	
-	public static Vector3 GetBikeBBox (int i) {
-		return BikeModel.GetBBoxSize();
+	public Vector3 GetBikeBBox (int i) {
+		return GetBike(i).GetBBoxSize();			
 	}
 
-	public static float GetBikeBBoxRadius (int i) {
-		return BikeModel.GetBBoxRadius();
+	public float GetBikeBBoxRadius (int i) {
+		return GetBike(i).GetBBoxRadius();
 	}
+	
+	public void drawCycleFast (Player player, long curr_time, long time_dt)
+	{
+		GLES11.glPushMatrix();
+		GLES11.glTranslatef(player.getXpos(), player.getYpos(), 0.0f);
+
+		player.doBikeRotation(curr_time);
+		//Lights.setupLights(gl, LightType.E_CYCLE_LIGHTS);
+
+		// IN
+		//GLES11.glFrontFace(GLES11.GL_CCW);
+		//GLES11.glShadeModel(GLES11.GL_SMOOTH);
+		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glEnable(GLES11.GL_LIGHTING);
+		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
+		GLES11.glDepthMask(true);
+
+		GLES11.glEnable(GLES11.GL_NORMALIZE);
+		GLES11.glTranslatef(0.0f, 0.0f, GetBikeBBox(player.aPlayerID).v[2] / 2.0f);
+		//GLES11.glEnable(GLES11.GL_CULL_FACE);
+		//gl.glTranslatef((GridSize/2.0f), (GridSize/2.0f), 0.0f);
+		//gl.glTranslatef(_Player._PlayerXpos, _Player._PlayerYpos, 0.0f);
+		// LH HACK
+		GetBike(player.aPlayerID).Draw(player.mPlayerColourSpecular, player.mPlayerColourDiffuse);
+
+		// OUT
+		//GLES11.glDisable(GLES11.GL_CULL_FACE);
+		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_LIGHTING);
+		//GLES11.glShadeModel(GLES11.GL_FLAT);
+
+		GLES11.glPopMatrix();		
+	}
+
 }

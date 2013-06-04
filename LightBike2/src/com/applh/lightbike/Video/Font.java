@@ -1,5 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -34,11 +33,15 @@ import android.content.Context;
 public class Font {
 
 	//private int _nTextures;
-	public int _texwidth;
-	public int _width;
-	public int _lower;
-	public int _upper;
+	public int aTexwidth;
+	public int aWidth;
+	public int aLower;
+	public int aUpper;
 
+	public int aRatio;
+	public int aRatio2;
+	public float aRatioCF;
+	
 	private static float TmpVertex[] = new float[6 * 2];
 	private static float TmpTextre[] = new float[6 * 2];
 		
@@ -46,17 +49,23 @@ public class Font {
 	// what both fonts use in the default art pack
 	private GLTexture Tex1;
 	private GLTexture Tex2;
+	private int aTexId1;
+	private int aTexId2;
+	
 	
 	public Font (Context context, int tex1, int tex2)
 	{
 		Tex1 = new GLTexture(context, tex1, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, false);
-		Tex2 = new GLTexture(context, tex2, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, false);
+		Tex2 = new GLTexture(context, tex2, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, false); 
+		
+		aTexId1 = Tex1.getTextureID();
+		aTexId2 = Tex2.getTextureID();
 		//_nTextures = 2;
 	}
 	
 	public void drawText (int x, int y, int size, String text)
 	{
-		//GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		
 		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
 		GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
@@ -68,13 +77,11 @@ public class Font {
 		renderString(text);
 		
 		GLES11.glPopMatrix();
-		//GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 	}
 	
 	private void renderString (String str)
 	{
-		int w = _texwidth / _width;
-		float cw = (float)_width / (float)_texwidth;
 		float cx,cy;
 		int i, index;
 		int tex;
@@ -82,53 +89,52 @@ public class Font {
 		
 		//float vertex[] = new float[6 * 2];
 		//float textre[] = new float[6 * 2];
-		FloatBuffer vertexBuff;
-		FloatBuffer texBuff;
+		FloatBuffer vertexBuff = null;
+		FloatBuffer texBuff = null;
 		
 		// skip color bit is it used?
 		
 		for (i = 0; i < str.length(); i++) {
-			index = str.charAt(i) - _lower + 1;
+			index = str.charAt(i) - aLower + 1;
 			
-			if(index >= _upper)
+			if (index >= aUpper)
 				return; // index out of bounds
 			
-			tex = index / (w * w);
+			tex = index / aRatio2;
 			
 			// Bind texture
-			if(tex != bound)
-			{
+			if (tex != bound) {
 				if(tex == 0)
-					GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, Tex1.getTextureID());
+					GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, aTexId1);
 				else
-					GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, Tex2.getTextureID());
+					GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, aTexId2);
 				
 				GLES11.glTexEnvf(GLES11.GL_TEXTURE_ENV, GLES11.GL_TEXTURE_ENV_MODE, GLES11.GL_MODULATE);
 				bound = tex;
 			}
 			
 			// find texture coordinates
-			index = index % (w * w);
-			cx = (float)(index % w) / (float)w;
-			cy = (float)(index / w) / (float)w;
+			index = index % aRatio2;
+			cx = (float)(index % aRatio) / (float)aRatio;
+			cy = (float)(index / aRatio) / (float)aRatio;
 			
 			// draw character
 			TmpTextre[0] = cx;
-			TmpTextre[1] = 1.0f-cy-cw;
+			TmpTextre[1] = 1.0f-cy-aRatioCF;
 			TmpVertex[0] = (float)i;
 			TmpVertex[1] = 0.0f;
 			
-			TmpTextre[2] = cx+cw;
-			TmpTextre[3] = 1.0f-cy-cw;
+			TmpTextre[2] = cx+aRatioCF;
+			TmpTextre[3] = 1.0f-cy-aRatioCF;
 			TmpVertex[2] = i + 1.0f;
 			TmpVertex[3] = 0.0f;
 			
-			TmpTextre[4] = cx + cw;
+			TmpTextre[4] = cx + aRatioCF;
 			TmpTextre[5] = 1.0f - cy;
 			TmpVertex[4] = i + 1.0f;
 			TmpVertex[5] = 1.0f;
 			
-			TmpTextre[6] = cx + cw;
+			TmpTextre[6] = cx + aRatioCF;
 			TmpTextre[7] = 1.0f - cy;
 			TmpVertex[6] = i + 1.0f;
 			TmpVertex[7] = 1.0f;
@@ -139,7 +145,7 @@ public class Font {
 			TmpVertex[9] = 1.0f;
 			
 			TmpTextre[10] = cx;
-			TmpTextre[11] = 1.0f - cy - cw;
+			TmpTextre[11] = 1.0f - cy - aRatioCF;
 			TmpVertex[10] = i;
 			TmpVertex[11] = 0.0f;
 			

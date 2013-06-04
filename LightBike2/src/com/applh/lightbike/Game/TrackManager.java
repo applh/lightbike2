@@ -66,7 +66,7 @@ public class TrackManager {
 					if (aRenderer != null) {
 						aRenderer.drawTracks(curTS.aTabTracks, nbTracks, trackH, curTS.aColor);
 						// melt down
-						curTS.aHeight-= aScale * delta;
+						curTS.aHeight -= aScale * delta;
 					}
 				}
 				else {

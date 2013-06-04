@@ -33,6 +33,11 @@ public class Vector3 {
 		
 	}
 
+	public void reinit (float x, float y, float z) {
+		v[0] = x;
+		v[1] = y;
+		v[2] = z;
+	}
 	public void copy (Vector3 V1)
 	{
 		v[0] = V1.v[0];

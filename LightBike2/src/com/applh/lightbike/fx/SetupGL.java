@@ -216,78 +216,23 @@ public class SetupGL {
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MIN_FILTER, aMinFilter);
     	GLES11.glTexParameterf(GLES11.GL_TEXTURE_2D, GLES11.GL_TEXTURE_MAG_FILTER, aMaxFilter);
 	}
-/*	
-	public static GLTexture[] GetSkyBoxTex2 () {
-		if (SkyBoxTex == null) {
-			GLTexture tabTex[] = { 
-				new GLTexture(aContext, R.drawable.skybox0),
-				new GLTexture(aContext, R.drawable.skybox1),
-				new GLTexture(aContext, R.drawable.skybox2),
-				new GLTexture(aContext, R.drawable.skybox3),
-				new GLTexture(aContext, R.drawable.skybox4),
-				new GLTexture(aContext, R.drawable.skybox5) };
-			SkyBoxTex = tabTex;
-		}
-		return SkyBoxTex;
-	}
-*/	
 
 	public static GLTexture GetExplodeTex () {
 		if (ExplodeTex == null) {
 			ExplodeTex = new GLTexture(aContext, R.drawable.gltron_impact , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
+			TexIdExplode = ExplodeTex.getTextureID();
 		}
 		return ExplodeTex;
 	}
 
 	public static int GetTexIdExplode (int index) {
 		GetExplodeTex();
-		TexIdExplode = ExplodeTex.getTextureID();
 		return TexIdExplode;
 	}
 
 	public static int GetTexIdFloor () {
 		return aTexIdFloor;
 	}
-/*
-	public static int GetTexIdSkyBox_DEV (int b) {
-		int res = -1;
-		if (SkyBoxTex == null) {
-			GLTexture tabTex[] = { 
-				new GLTexture(aContext, R.drawable.t0),
-				new GLTexture(aContext, R.drawable.t1),
-				new GLTexture(aContext, R.drawable.t2),
-				new GLTexture(aContext, R.drawable.t3),
-		 		new GLTexture(aContext, R.drawable.t4),
-				new GLTexture(aContext, R.drawable.t5) };
-			SkyBoxTex = tabTex;
-		}
-		if (SkyBoxTex != null) {
-			GLTexture sbTex = SkyBoxTex[b];
-			if (sbTex != null) 
-				res = sbTex.getTextureID();
-		}
-		return res;
-	}
-	public static int GetTexIdSkyBox(int b) {
-		int res = -1;
-		if (SkyBoxTex == null) {
-			GLTexture tabTex[] = { 
-				new GLTexture(aContext, aTexIdSkybox1, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, aTexIdSkybox2, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, aTexIdSkybox3, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, aTexIdSkybox4, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-		 		new GLTexture(aContext, R.drawable.skybox_bottom, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true),
-				new GLTexture(aContext, R.drawable.skybox_top, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true) };
-			SkyBoxTex = tabTex;
-		}
-		if (SkyBoxTex != null) {
-			GLTexture sbTex = SkyBoxTex[b];
-			if (sbTex != null) 
-				res = sbTex.getTextureID();
-		}
-		return res;
-	}
-*/
 	
 	public static int GetTexIdWalls (int w) {
 		int res = 0;
@@ -344,14 +289,18 @@ public class SetupGL {
 			aXenoFont = new Font(aContext, R.drawable.xenotron0, R.drawable.xenotron1);
 
 			// Hard code these values for now allow loadable fonts later...
-			aXenoFont._texwidth = 256;
-			aXenoFont._width = 32;
-			aXenoFont._lower = 32;
-			aXenoFont._upper = 126;
+			aXenoFont.aTexwidth = 256;
+			aXenoFont.aWidth = 32;
+			aXenoFont.aLower = 32;
+			aXenoFont.aUpper = 126;
+			aXenoFont.aRatio = aXenoFont.aTexwidth / aXenoFont.aWidth;
+			aXenoFont.aRatio2 = aXenoFont.aRatio * aXenoFont.aRatio;
+			aXenoFont.aRatioCF = (float) aXenoFont.aWidth / (float) aXenoFont.aTexwidth;
 
 		}
 		return aXenoFont;
 	}
+	
 	public boolean drawSplash() {
 				
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
@@ -402,4 +351,42 @@ public class SetupGL {
 		return true;
 	}
 
+	public void drawTile (int texID, float verts[]) {
+		
+		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+		GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
+		GLES11.glEnableClientState(GLES11.GL_NORMAL_ARRAY);
+		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
+
+		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, texID);
+/*
+		float verts[] = {
+				-1.0f,  1.0f, 0.0f,
+				 1.0f,  1.0f, 0.0f,
+				-1.0f, -1.0f, 0.0f,
+				 1.0f, -1.0f, 0.0f
+			};
+*/			
+		float texture[] = {
+			0.0f, 1.0f, 
+			1.0f, 1.0f,
+			0.0f, 0.0f, 
+			1.0f, 0.0f
+		};
+		FloatBuffer vertfb = ByteBufferManager.ReuseFloatBuffer(verts);
+		GLES11.glVertexPointer(3, GLES11.GL_FLOAT, 0, vertfb);
+
+		FloatBuffer texfb = ByteBufferManager.ReuseFloatBuffer(texture);
+		GLES11.glTexCoordPointer(2, GLES11.GL_FLOAT, 0, texfb);
+
+		// DRAW THE BITMAP AS TEXTURE
+		GLES11.glDrawArrays(GLES11.GL_TRIANGLE_STRIP, 0, 4);
+
+		GLES11.glDisableClientState(GLES11.GL_VERTEX_ARRAY);
+		GLES11.glDisableClientState(GLES11.GL_NORMAL_ARRAY);
+		GLES11.glDisableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
+		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		
+	}
+	
 }

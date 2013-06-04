@@ -1,5 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -92,6 +91,11 @@ public class ComputerAI {
 	private static Segment TmpInter2 = new Segment();
 	private static Segment TmpDistance[] = new Segment[E_MAX];
 
+	private Vector3 aTmpV1 = new Vector3();
+	private Vector3 aTmpV2 = new Vector3();
+	private Vector3 aTmpPos0 = new Vector3();
+	private Vector3 aTmpPos1 = new Vector3();
+	
 	public static void initAI2 (Segment walls[], Player players[], float gSize)
 	{
 		Walls = walls;
@@ -175,18 +179,18 @@ public class ComputerAI {
 		
 		// Compute sector
 		Vector3 diff = TmpPlayer.vStart.sub(TmpOpponent.vStart);
-		Vector3 v1 = new Vector3(diff.v[0], diff.v[1], 0.0f);
-		Vector3 v2 = new Vector3(TmpOpponent.vDirection.v[0], TmpOpponent.vDirection.v[1],0.0f);
+		aTmpV1.reinit(diff.v[0], diff.v[1], 0.0f);
+		aTmpV2.reinit(TmpOpponent.vDirection.v[0], TmpOpponent.vDirection.v[1],0.0f);
 		
-		v1.Normalise();
-		v2.Normalise();
+		aTmpV1.Normalise();
+		aTmpV2.Normalise();
 		
-		Vector3 v3 = v1.Cross(v2);
+		Vector3 v3 = aTmpV1.Cross(aTmpV2);
 		v3.Normalise();
 		
 		float cosphi,phi;
 		
-		cosphi = v1.Dot(v2);
+		cosphi = aTmpV1.Dot(aTmpV2);
 		
 		if (cosphi < -1)
 			cosphi = -1;
@@ -204,7 +208,7 @@ public class ComputerAI {
 		
 		for(i=0; i < 8; i++) {
 			phi -= (float)Math.PI / 4.0f;
-			if(phi < 0.0f) {
+			if (phi < 0.0f) {
 				location = i;
 				break;
 			}
@@ -302,10 +306,9 @@ public class ComputerAI {
 		aiTime[player] = Current;
 	} 
 	
-	private static int getClosestOpponent( int player)
+	private int getClosestOpponent( int player)
 	{
-		Vector3 v_player =  new Vector3(Players[player].getXpos(), Players[player].getYpos(), 0.0f);
-		Vector3 v_opponent;
+		aTmpPos0.reinit(Players[player].getXpos(), Players[player].getYpos(), 0.0f);
 		Vector3 diff;
 		int i;
 		int retVal = -1;
@@ -318,8 +321,8 @@ public class ComputerAI {
 				continue;
 			
 			if (Players[i].getSpeed() > 0) {
-				v_opponent = new Vector3(Players[i].getXpos(),Players[i].getYpos(),0.0f);
-				diff = v_player.sub(v_opponent);
+				aTmpPos1.reinit(Players[i].getXpos(),Players[i].getYpos(),0.0f);
+				diff = aTmpPos0.sub(aTmpPos1);
 				d = Math.abs(diff.v[0]) + Math.abs(diff.v[1]);
 				if(d < distance) {
 					distance = d;
@@ -332,7 +335,7 @@ public class ComputerAI {
 		
 	}
 	
-	private static void calculateDistances( int player)
+	private void calculateDistances (int player)
 	{
 		int i,j;
 		int currDir = Players[player].getDirection();
@@ -341,11 +344,11 @@ public class ComputerAI {
 		float t1,t2;
 		Segment wall[];
 		Vector3  v;
-		Vector3 vPos  = new Vector3(Players[player].getXpos(),Players[player].getYpos(), 0.0f);
+		aTmpPos0.reinit(Players[player].getXpos(),Players[player].getYpos(), 0.0f);
 		
 		for (i = 0; i< E_MAX; i++ ) {
 			TmpDistance[i].reset();
-			TmpDistance[i].vStart.copy(vPos);
+			TmpDistance[i].vStart.copy(aTmpPos0);
 		}
 		
 		TmpDistance[E_FRONT].vDirection.v[0] = Players[player].DIRS_X[currDir];
@@ -444,7 +447,7 @@ public class ComputerAI {
 				break;
 			case 1:
 				// Turn left
-				if(left > save_distance) {
+				if (left > save_distance) {
 					Players[player].doTurn(Players[player].TURN_LEFT, Current);
 					tdiff[player]++;
 					aiTime[player] = Current;
@@ -452,7 +455,7 @@ public class ComputerAI {
 				break;
 			case 2:
 				// Turn right
-				if(right > save_distance) {
+				if (right > save_distance) {
 					Players[player].doTurn(Players[player].TURN_RIGHT, Current);
 					tdiff[player]--;
 					aiTime[player] = Current;
