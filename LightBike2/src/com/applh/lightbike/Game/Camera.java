@@ -74,19 +74,19 @@ public class Camera {
 	private static final int CAM_FREE_PHI = 1;
 	private static final int CAM_FREE_CHI = 2;
 	
-	private static final float CLAMP_R_MIN = 7.0f;
-	private static final float CLAMP_R_MAX = 40.0f;
+	private static final float CLAMP_R_MIN = 10.0f;
+	private static final float CLAMP_R_MAX = 30.0f;
 	private static final float CLAMP_CHI_MIN = (((float)Math.PI) / 8.0f);
 	private static final float CLAMP_CHI_MAX = (3.0f * (float)Math.PI / 8.0f);
 	
-	private static final float B_HEIGHT = 0.0f;
+//	private static final float B_HEIGHT = 2.0f;
 	
 	private static final float cam_defaults[][] = {
 		{ CAM_CIRCLE_DIST, (float)Math.PI / 3.0f, 0.0f }, // circle
-		{ CAM_FOLLOW_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow
-		{ CAM_FOLLOW_FAR_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow far
-		{ CAM_FOLLOW_CLOSE_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow close
-		{ CAM_FOLLOW_BIRD_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // birds-eye view
+		{ CAM_FOLLOW_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow
+		{ CAM_FOLLOW_FAR_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow far
+		{ CAM_FOLLOW_CLOSE_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow close
+		{ CAM_FOLLOW_BIRD_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // birds-eye view
 		{ CAM_COCKPIT_Z,   (float)Math.PI / 8.0f, 0.0f }, // cockpit
 		{ CAM_CIRCLE_DIST, (float)Math.PI / 3.0f, 0.0f } // free
 	};
@@ -252,7 +252,7 @@ public class Camera {
 								
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 				
 		}
@@ -315,7 +315,7 @@ public class Camera {
 				
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 				
 			case E_CAM_TYPE_FOLLOW:
@@ -342,7 +342,7 @@ public class Camera {
 
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 			default:
 				break;

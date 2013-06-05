@@ -85,15 +85,19 @@ public class HUD {
 	    
 	    // setting font size
 	    // 720 => 16, 768 => 16, 1080 => 32
-	    if (game.aVisual._iheight > 1000) {
+    	aFont0 = 32;
+	    aFont1 = 24; 	    	
+	    aFont2 = 16;
+	    // adjust to various screen sizes
+	    if (game.aVisual._iheight > 999) {
 	    	aFont0 = 40;
 		    aFont1 = 32;
 	    	aFont2 = 24;
 	    }
-	    else {
-	    	aFont0 = 32;
-		    aFont1 = 24; 	    	
-		    aFont2 = 16;
+	    else if (game.aVisual._iheight < 666) {
+	    	aFont0 = 24;
+		    aFont1 = 24;
+	    	aFont2 = 16;
 	    }
 	    
 	    aPowerFont = aFont1;
@@ -198,7 +202,7 @@ public class HUD {
 		int ts = aFont0 * 3 / 2;
 		int ts2 = 2*ts;
 		
-		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
+		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 0.8f);
 		aXenoFont.drawText(1*x8 -ts, ts2, aFont0, "==\\");
 		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "(-)");	
 		aXenoFont.drawText(5*x8 -ts, ts2, aFont0, "(0)");	
@@ -248,11 +252,11 @@ public class HUD {
 		String str = null;
 		
 		if(dispWinner) {
-			str = "[+] YOU WIN [+]";
+			str = "[+]  YOU WIN  [+]";
 			GLES11.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 		}
 		else if(dispLoser) {
-			str = "[X] CRASH [X]";
+			str = "[X]  CRASH  [X]";
 			GLES11.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		}
 		
@@ -277,7 +281,7 @@ public class HUD {
 			str1 = "        TOUCH YOUR BIKE TO START        ";
 			str2 = "                [options]                ";
 			
-			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			GLES11.glColor4f(0.8f, 0.8f, 0.8f, 0.8f);
 			
 			aXenoFont.drawText(
 					5,
@@ -285,12 +289,14 @@ public class HUD {
 					(game.aVisual._vp_w / (6 / 4 * str0.length())),
 					str0);
 
+			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			aXenoFont.drawText(
 					5,
 					game.aVisual._vp_h / 3,
 					(game.aVisual._vp_w / (6 / 4 * str1.length())),
 					str1);
 			
+			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 			aXenoFont.drawText(
 					5,
 					game.aVisual._vp_h / 7,

@@ -171,17 +171,18 @@ public class SetupGL {
 	}
 	
 	public static void PrepareTexFloor () {
-		aGSetFloor = aRand.nextInt(3);
+		aGSetFloor = aRand.nextInt(aGSet.aNbFloor);
 		aTexIdFloor = aGSet.getTexIdFloor(aGSetFloor);
 	}
 
 	public static void PrepareTexWalls () {
-		// FIXME
-		int w = aRand.nextInt(4);
-		aGSetWall1 = w*4;
-		aGSetWall2 = w*4 +1;
-		aGSetWall3 = w*4 +2;
-		aGSetWall4 = w*4 +3;
+		int setWall = aGSet.aNbSetWall;
+		int w = aRand.nextInt(setWall);
+
+		aGSetWall1 = w*aGSet.aNbImgWall;
+		aGSetWall2 = w*aGSet.aNbImgWall +1;
+		aGSetWall3 = w*aGSet.aNbImgWall +2;
+		aGSetWall4 = w*aGSet.aNbImgWall +3;
 		
 		aTexIdWall1 = aGSet.getTexIdWall(aGSetWall1);
 		aTexIdWall2 = aGSet.getTexIdWall(aGSetWall2);
@@ -190,14 +191,15 @@ public class SetupGL {
 	}	
 
 	public static void PrepareTexSkybox () {
-		// FIXME
-		int w = aRand.nextInt(3);
-		aGSetSkybox1 = w*6;
-		aGSetSkybox2 = w*6 +1;
-		aGSetSkybox3 = w*6 +2;
-		aGSetSkybox4 = w*6 +3;
-		aGSetSkyboxB = w*6 +4;
-		aGSetSkyboxT = w*6 +5;
+		int setSkyBox = aGSet.aNbSetSkybox;
+		int w = aRand.nextInt(setSkyBox);
+		
+		aGSetSkybox1 = w*aGSet.aNbImgSkybox;
+		aGSetSkybox2 = w*aGSet.aNbImgSkybox +1;
+		aGSetSkybox3 = w*aGSet.aNbImgSkybox +2;
+		aGSetSkybox4 = w*aGSet.aNbImgSkybox +3;
+		aGSetSkyboxB = w*aGSet.aNbImgSkybox +4;
+		aGSetSkyboxT = w*aGSet.aNbImgSkybox +5;
 		
 		aTexIdSkybox1 = aGSet.getTexIdSkybox(aGSetSkybox1);
 		aTexIdSkybox2 = aGSet.getTexIdSkybox(aGSetSkybox2);

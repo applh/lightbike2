@@ -19,8 +19,14 @@ public class GraphicSet {
 	public GLTexture aWallTex[] = null;
 	public GLTexture aFloorTex[] = null;
 
-	public int aNbSkybox = 18;
-	public int aNbWall = 16;
+	public int aNbImgSkybox=6;
+	public int aNbImgWall=4;
+
+	public int aNbSetSkybox=4;
+	public int aNbSetWall=5;
+	
+	public int aNbSkybox = aNbImgSkybox * aNbSetSkybox; // 6 images/set
+	public int aNbWall = aNbImgWall * aNbSetWall; // 4 images/set
 	public int aNbFloor = 3;
 	
 	public GraphicSet (Context c) {
@@ -125,6 +131,7 @@ public class GraphicSet {
 			case 3:
 				resId = R.drawable.hd1_wall_4;
 				break;
+
 			// SET 2
 			case 4:
 				resId = R.drawable.hd2_wall_1;
@@ -167,6 +174,20 @@ public class GraphicSet {
 				resId = R.drawable.hd4_wall_4;
 				break;
 
+			// SET 4
+			case 16:
+				resId = R.drawable.hd5_wall_1;
+				break;
+			case 17:
+				resId = R.drawable.hd5_wall_2;
+				break;
+			case 18:
+				resId = R.drawable.hd5_wall_3;
+				break;
+			case 19:
+				resId = R.drawable.hd5_wall_4;
+				break;
+
 			// DEFAULT				
 			default:
 				resId = R.drawable.hd1_wall_1;
@@ -179,7 +200,7 @@ public class GraphicSet {
 		}
 		return res;	
 	}
-	
+		
 	public GLTexture loadTexSkybox (int resIndex) {
 		int resId = 0;
 		GLTexture res = null;
@@ -250,7 +271,27 @@ public class GraphicSet {
 				resId = R.drawable.skybox_3b;
 				break;
 
-			// DEFAULT				
+			// SET 3
+			case 18:
+				resId = R.drawable.skybox_40;
+				break;
+			case 19:
+				resId = R.drawable.skybox_41;
+				break;
+			case 20:
+				resId = R.drawable.skybox_42;
+				break;
+			case 21:
+				resId = R.drawable.skybox_43;
+				break;
+			case 22:
+				resId = R.drawable.skybox_4t;
+				break;
+			case 23:
+				resId = R.drawable.skybox_4b;
+				break;
+
+				// DEFAULT				
 			default:
 				resId = R.drawable.skybox_10;
 				break;				
