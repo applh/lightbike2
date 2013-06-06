@@ -99,6 +99,12 @@ public class OpenGLView extends GLSurfaceView {
 				if (aRenderer != null)
 					aRenderer.onTouch(aX, aY);
 			}
+			else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+				aX = event.getX();
+				aY = event.getY();
+				if (aRenderer != null)
+					aRenderer.onMove(aX, aY);
+			}
 		}
 		
 		return true;

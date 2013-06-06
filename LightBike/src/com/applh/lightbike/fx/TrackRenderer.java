@@ -17,7 +17,7 @@ import android.util.FloatMath;
 public class TrackRenderer {
 
 	private static FloatBuffer aFb = null;
-//	private static FloatBuffer aFb2 = null;
+	public float aAlphaMin = 1.0f;
 	
 	private static final byte Indices[] = {0,1,2, 0,2,3}; // TL>BL>BR > TL>BR>TR
 	private static final ByteBuffer IndicesBuffer = ByteBufferManager.CreateByteBuffer(Indices);
@@ -132,6 +132,9 @@ public class TrackRenderer {
 			float green = color[1];
 			float blue = color[2];
 			float alpha = 1.0f - 0.4f * segOffset / (trail_offset + 1.0f);
+			
+			if (alpha < aAlphaMin) alpha = aAlphaMin;
+			
 			GLES11.glColor4f(red, green, blue, alpha);
 
 			// last segment

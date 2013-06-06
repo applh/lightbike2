@@ -15,26 +15,37 @@ public class GraphicSet {
 	private Context aContext = null;
 	public int aGraphicSet;
 
+	public GLTexture aSkyboxTex[] = null;
 	public GLTexture aWallTex[] = null;
 	public GLTexture aFloorTex[] = null;
-	public int aNbWall;
-	public int aNbFloor;
+
+	public int aNbImgSkybox=6;
+	public int aNbImgWall=4;
+
+	public int aNbSetSkybox=4;
+	public int aNbSetWall=5;
+	
+	public int aNbSkybox = aNbImgSkybox * aNbSetSkybox; // 6 images/set
+	public int aNbWall = aNbImgWall * aNbSetWall; // 4 images/set
+	public int aNbFloor = 3;
 	
 	public GraphicSet (Context c) {
 		aContext = c;
 		
-		aNbFloor = 3;
 		aFloorTex = new GLTexture[aNbFloor];
 		for (int i=0; i<aFloorTex.length; i++) {
 			aFloorTex[i] = null;
 		}
 
-		aNbWall = 12;
 		aWallTex = new GLTexture[aNbWall];
 		for (int i=0; i<aWallTex.length; i++) {
 			aWallTex[i] = null;
 		}
 		
+		aSkyboxTex = new GLTexture[aNbSkybox];
+		for (int i=0; i<aSkyboxTex.length; i++) {
+			aSkyboxTex[i] = null;
+		}
 	}
 	
 	public int getTexIdFloor (int i) {
@@ -52,6 +63,16 @@ public class GraphicSet {
 		int res = 0;
 		if (i < aWallTex.length) {
 			GLTexture resTex = loadTexWall(i);
+			if (resTex != null)
+				res = resTex.getTextureID();
+		}
+		return res;
+	}
+
+	public int getTexIdSkybox (int i) {
+		int res = 0;
+		if (i < aSkyboxTex.length) {
+			GLTexture resTex = loadTexSkybox(i);
 			if (resTex != null)
 				res = resTex.getTextureID();
 		}
@@ -110,6 +131,7 @@ public class GraphicSet {
 			case 3:
 				resId = R.drawable.hd1_wall_4;
 				break;
+
 			// SET 2
 			case 4:
 				resId = R.drawable.hd2_wall_1;
@@ -123,6 +145,7 @@ public class GraphicSet {
 			case 7:
 				resId = R.drawable.hd2_wall_4;
 				break;
+
 			// SET 3
 			case 8:
 				resId = R.drawable.hd3_wall_1;
@@ -136,6 +159,35 @@ public class GraphicSet {
 			case 11:
 				resId = R.drawable.hd3_wall_4;
 				break;
+
+			// SET 4
+			case 12:
+				resId = R.drawable.hd4_wall_1;
+				break;
+			case 13:
+				resId = R.drawable.hd4_wall_2;
+				break;
+			case 14:
+				resId = R.drawable.hd4_wall_3;
+				break;
+			case 15:
+				resId = R.drawable.hd4_wall_4;
+				break;
+
+			// SET 4
+			case 16:
+				resId = R.drawable.hd5_wall_1;
+				break;
+			case 17:
+				resId = R.drawable.hd5_wall_2;
+				break;
+			case 18:
+				resId = R.drawable.hd5_wall_3;
+				break;
+			case 19:
+				resId = R.drawable.hd5_wall_4;
+				break;
+
 			// DEFAULT				
 			default:
 				resId = R.drawable.hd1_wall_1;
@@ -145,6 +197,109 @@ public class GraphicSet {
 			res = new GLTexture(aContext, resId, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);
 			if (resIndex < aWallTex.length)
 				aWallTex[resIndex] = res;
+		}
+		return res;	
+	}
+		
+	public GLTexture loadTexSkybox (int resIndex) {
+		int resId = 0;
+		GLTexture res = null;
+		
+		if (resIndex < aSkyboxTex.length)
+			res = aSkyboxTex[resIndex];
+		
+		if (res == null) {
+			switch (resIndex) {
+			// SET 1
+			case 0:
+				resId = R.drawable.skybox_10;
+				break;
+			case 1:
+				resId = R.drawable.skybox_11;
+				break;
+			case 2:
+				resId = R.drawable.skybox_12;
+				break;
+			case 3:
+				resId = R.drawable.skybox_13;
+				break;
+			case 4:
+				resId = R.drawable.skybox_1t;
+				break;
+			case 5:
+				resId = R.drawable.skybox_1b;
+				break;
+
+			// SET 2
+			case 6:
+				resId = R.drawable.skybox_20;
+				break;
+			case 7:
+				resId = R.drawable.skybox_21;
+				break;
+			case 8:
+				resId = R.drawable.skybox_22;
+				break;
+			case 9:
+				resId = R.drawable.skybox_23;
+				break;
+			case 10:
+				resId = R.drawable.skybox_2t;
+				break;
+			case 11:
+				resId = R.drawable.skybox_2b;
+				break;
+
+
+			// SET 3
+			case 12:
+				resId = R.drawable.skybox_30;
+				break;
+			case 13:
+				resId = R.drawable.skybox_31;
+				break;
+			case 14:
+				resId = R.drawable.skybox_32;
+				break;
+			case 15:
+				resId = R.drawable.skybox_33;
+				break;
+			case 16:
+				resId = R.drawable.skybox_3t;
+				break;
+			case 17:
+				resId = R.drawable.skybox_3b;
+				break;
+
+			// SET 3
+			case 18:
+				resId = R.drawable.skybox_40;
+				break;
+			case 19:
+				resId = R.drawable.skybox_41;
+				break;
+			case 20:
+				resId = R.drawable.skybox_42;
+				break;
+			case 21:
+				resId = R.drawable.skybox_43;
+				break;
+			case 22:
+				resId = R.drawable.skybox_4t;
+				break;
+			case 23:
+				resId = R.drawable.skybox_4b;
+				break;
+
+				// DEFAULT				
+			default:
+				resId = R.drawable.skybox_10;
+				break;				
+			}
+
+			res = new GLTexture(aContext, resId, GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);
+			if (resIndex < aSkyboxTex.length)
+				aSkyboxTex[resIndex] = res;
 		}
 		return res;	
 	}

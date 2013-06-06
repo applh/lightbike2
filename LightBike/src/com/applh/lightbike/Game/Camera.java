@@ -43,7 +43,7 @@ public class Camera {
 	
 	private long _steadyCount = 0;
 	private long _steadyCountMax = 100;
-	private long _deltaR = 1;
+	private long _deltaR = -1;
 	private volatile boolean _isTravelling = true;
 	
 	// LH TODO: review interdependence
@@ -74,19 +74,19 @@ public class Camera {
 	private static final int CAM_FREE_PHI = 1;
 	private static final int CAM_FREE_CHI = 2;
 	
-	private static final float CLAMP_R_MIN = 7.0f;
-	private static final float CLAMP_R_MAX = 40.0f;
+	private static final float CLAMP_R_MIN = 10.0f;
+	private static final float CLAMP_R_MAX = 30.0f;
 	private static final float CLAMP_CHI_MIN = (((float)Math.PI) / 8.0f);
 	private static final float CLAMP_CHI_MAX = (3.0f * (float)Math.PI / 8.0f);
 	
-	private static final float B_HEIGHT = 0.0f;
+//	private static final float B_HEIGHT = 2.0f;
 	
 	private static final float cam_defaults[][] = {
 		{ CAM_CIRCLE_DIST, (float)Math.PI / 3.0f, 0.0f }, // circle
-		{ CAM_FOLLOW_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow
-		{ CAM_FOLLOW_FAR_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow far
-		{ CAM_FOLLOW_CLOSE_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // follow close
-		{ CAM_FOLLOW_BIRD_DIST, (float)Math.PI / 4.0f, (float)Math.PI / 72.0f }, // birds-eye view
+		{ CAM_FOLLOW_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow
+		{ CAM_FOLLOW_FAR_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow far
+		{ CAM_FOLLOW_CLOSE_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // follow close
+		{ CAM_FOLLOW_BIRD_DIST, (float)Math.PI / 4.0f, (float) Math.PI / 72.0f }, // birds-eye view
 		{ CAM_COCKPIT_Z,   (float)Math.PI / 8.0f, 0.0f }, // cockpit
 		{ CAM_CIRCLE_DIST, (float)Math.PI / 3.0f, 0.0f } // free
 	};
@@ -248,11 +248,11 @@ public class Camera {
 				// prepare next frame ?
 				// change the angle PHI value for CIRCLING CAMERA
 				//_movement[CAM_PHI] += CAM_SPEED * dt;
-				_movement[CAM_PHI] += CAM_SPEED * dt;
+				_movement[CAM_PHI] -= CAM_SPEED * dt;
 								
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 				
 		}
@@ -315,7 +315,7 @@ public class Camera {
 				
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 				
 			case E_CAM_TYPE_FOLLOW:
@@ -332,9 +332,9 @@ public class Camera {
 						_steadyCount = 0;
 						Random rand = new Random();
 						if (_deltaR > 0)
-							_steadyCountMax = 1000 + rand.nextInt(200);
+							_steadyCountMax = 1000 + rand.nextInt(150);
 						else 
-							_steadyCountMax = 50 + rand.nextInt(100);
+							_steadyCountMax = 50 + rand.nextInt(150);
 					}					
 				}
 				// securised with CLAMP_R_MIN and CLAMP_R_MAX
@@ -342,7 +342,7 @@ public class Camera {
 
 				TmpTDest[0] = x;
 				TmpTDest[1] = y;
-				TmpTDest[2] = B_HEIGHT;
+				TmpTDest[2] = _movement[CAM_R] / 8;
 				break;
 			default:
 				break;

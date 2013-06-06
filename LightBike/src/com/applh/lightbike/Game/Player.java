@@ -12,31 +12,30 @@ package com.applh.lightbike.Game;
 import java.util.Random;
 
 import android.opengl.GLES11;
-import android.util.FloatMath;
 
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.fx.Explosion;
-import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
 
 	public int aPower = 0;
+	public int aPowerMax = 0;
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
 	public boolean aIsCrash;
 
 	public float aGridSize;
 	
-	private int aPlayerID;
+	public int aPlayerID;
 	private int Direction;
 	private int LastDirection;
 	
 	private int Score;
 	
 	private TrackManager aTrackManager;
-	private final int MaxTracks = 100;
-	private BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
+	public final int MaxTracks = 100;
+	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
 	private int aDamageMin = 5;
 	private int aDamageRange = 20;
@@ -44,7 +43,7 @@ public class Player {
 	private float aCrashRotationZ = 0;
 	
 	public int aTrailOffset;
-	private float aTrailHeight;
+	public float aTrailHeight;
 	
 	private float aSpeedRef;
 	private int aSpeedKmh;	
@@ -112,13 +111,13 @@ public class Player {
 
 	
 //	private final int MAX_LOD_LEVEL = 3;
-	private static final int LOD_DIST[][] = {
+/*	public static final int LOD_DIST[][] = {
 			{ 1000, 1000, 1000 },
 			{100, 200, 400},
 			{30,100,200},
 			{10,30,150}
 	};
-	
+*/
 	public Player (TrackManager manager, int player_number, float gridSize, float speed, int colorPref)
 	{
 		// when power = 0, Bike is crashed 
@@ -396,8 +395,8 @@ public class Player {
 
 		updateBBox(getXpos(), getYpos());
 	}
-	
-	public void drawCycleFast (long curr_time, long time_dt)
+/*	
+	public void drawCycleFast2 (long curr_time, long time_dt)
 	{
 		GLES11.glPushMatrix();
 		GLES11.glTranslatef(getXpos(), getYpos(), 0.0f);
@@ -429,7 +428,7 @@ public class Player {
 
 		GLES11.glPopMatrix();		
 	}
-
+*/
 	public void doCrashTestWalls(Segment Walls[], long curTime)
 	{
 		Segment Current = tabTracks[aTrailOffset];
@@ -467,7 +466,7 @@ public class Player {
 					Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 					Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 					
-					doDamage(curTime);
+					doDamage(curTime, 0);
 					if (aPower > 0) {
 						aSpeed = aSpeedRef;
 					}
@@ -613,7 +612,7 @@ public class Player {
 								Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 								
 								// RANDOM DAMAGE
-								doDamage(curTime);
+								doDamage(curTime, testPlayer.aTrailOffset/4);
 								
 								// kamikaze counts
 								testPlayer.restartTrack(curTime);
@@ -642,13 +641,13 @@ public class Player {
 		aCrashRotationTTL++;				
 	}
 	
-	public void doDamage (long curTime) {
+	public void doDamage (long curTime, int extra) {
 		// CREATE EXPLOSION
 		Explosion.Create(this);
 
 		// RANDOM DAMAGE
 		Random rand = new Random();
-		int damage = aDamageMin + rand.nextInt(aDamageRange);							
+		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);							
 		aPower -= damage;
 
 		if (aPower <= 0)  {
@@ -667,6 +666,7 @@ public class Player {
 		}
 	}
 
+	/*	
 	public void drawActiveTracks (TrackRenderer render, Camera cam)
 	{
 		if (aTrailHeight > 0.0f) {
@@ -675,7 +675,6 @@ public class Player {
 			}
 		}
 	}	
-	
 	public boolean isVisible (Camera cam)
 	{
 		Vector3 v1;
@@ -719,7 +718,7 @@ public class Player {
 		
 		return retValue;
 	}
-	
+*/	
 	private float getDirAngle (long time)
 	{
 		int last_dir;
@@ -741,7 +740,7 @@ public class Player {
 		return dir_angle;
 	}
 
-	private void doBikeRotation (long CurrentTime)
+	public void doBikeRotation (long CurrentTime)
 	{
 		  long time = CurrentTime - TurnTime;
 		  float dirAngle;
@@ -847,4 +846,9 @@ public class Player {
 	public boolean isCrashed () {
 		return aIsCrash;
 	}
+	
+	public void updatePowerMax () {
+		if (aPower > aPowerMax) aPowerMax = aPower;
+	}
+	
 }

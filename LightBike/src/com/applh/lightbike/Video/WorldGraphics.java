@@ -86,12 +86,15 @@ public class WorldGraphics {
 	private void initSkyBox ()
 	{
 		float d = (float)aGridSize * 2.0f;
+		
 		//float h = _wallH;
 		float xmin = 0 - 0.25f * d;
 		float xmax = xmin + d;
+		
 		float ymin = 0 - 0.25f * d;
 		float ymax = ymin + d;
-		float zmin = 0 - 0.05f * d;
+		
+		float zmin = 0 - 0.10f * d;
 		float zmax = zmin + 0.5f * d;
 		
 		// TL>BL>BR>TL>BR>TR
@@ -274,7 +277,7 @@ public class WorldGraphics {
 
 		for (int i=0; i<6; i++)
 		{
-			GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdSkyBox(i));
+			GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdSkybox(i));
 			
 			GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
 			GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
