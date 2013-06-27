@@ -2,8 +2,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.applh.lightbike2"
-      android:versionCode="20"
-      android:versionName="4.5"
+      android:versionCode="21"
+      android:versionName="4.6"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="17"/>
     

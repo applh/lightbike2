@@ -1,5 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -22,7 +21,6 @@
 
 package com.applh.lightbike.Video;
 
-//import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLES11;
 
 import android.content.Context;
@@ -33,7 +31,7 @@ import android.opengl.GLUtils;
 
 public class GLTexture {
 
-	int _texID[];
+	int aTexID[];
 	private boolean boGenMipMap = true; // LH HACK ?
 	
 	int WrapS;
@@ -45,7 +43,7 @@ public class GLTexture {
 	{
 		WrapS = GLES11.GL_REPEAT;
 		WrapT = GLES11.GL_REPEAT;
-		_texID = new int[1];
+		aTexID = new int[1];
 		loadTexture(context,resource);
 	}
 
@@ -53,7 +51,7 @@ public class GLTexture {
 	{
 		WrapS = wrap_s;
 		WrapT = wrap_t;
-		_texID = new int[1];
+		aTexID = new int[1];
 		loadTexture(context,resource);
 	}
 	
@@ -62,7 +60,7 @@ public class GLTexture {
 		WrapS = wrap_s;
 		WrapT = wrap_t;
 		boGenMipMap = mipMap;
-		_texID = new int[1];
+		aTexID = new int[1];
 		loadTexture(context,resource);
 	}
 
@@ -70,7 +68,7 @@ public class GLTexture {
 	private void loadTexture (Context context, int resource) {
 	    
 	    // In which ID will we be storing this texture?
-		GLES11.glGenTextures(1, _texID, 0);
+		GLES11.glGenTextures(1, aTexID, 0);
 	    
 	    // We need to flip the textures vertically:
 	    Matrix flip = new Matrix();
@@ -87,7 +85,7 @@ public class GLTexture {
 	    Bitmap bmp = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), flip, true);
 	    temp.recycle();
 	    
-	    GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, _texID[0]);
+	    GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, aTexID[0]);
 	    
 	    // Set all of our texture parameters:
 	    if (boGenMipMap) {
@@ -108,17 +106,17 @@ public class GLTexture {
 	    
 	    // Generate, and load up all of the mipmaps:
 	    if (boGenMipMap) {
-		    for(int level=0, height = bmp.getHeight(), width = bmp.getWidth(); true; level++) {
+		    for (int level=0, height = bmp.getHeight(), width = bmp.getWidth(); true; level++) {
 		        // Push the bitmap onto the GPU:
 		        GLUtils.texImage2D(GLES11.GL_TEXTURE_2D, level, bmp, 0);
 		        
 		        // We need to stop when the texture is 1x1:
-		        if(height==1 && width==1) break;
+		        if (height==1 && width==1) break;
 		        
 		        // Resize, and let's go again:
 		        width >>= 1; height >>= 1;
-		        if(width<1)  width = 1;
-		        if(height<1) height = 1;
+		        if (width<1)  width = 1;
+		        if (height<1) height = 1;
 		        
 		        Bitmap bmp2 = Bitmap.createScaledBitmap(bmp, width, height, true);
 		        bmp.recycle();
@@ -135,7 +133,7 @@ public class GLTexture {
 
 	public int getTextureID()
 	{
-		return _texID[0];
+		return aTexID[0];
 	}
 	
 }

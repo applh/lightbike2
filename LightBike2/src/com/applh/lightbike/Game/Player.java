@@ -15,12 +15,16 @@ import android.opengl.GLES11;
 
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.fx.Explosion;
+import com.applh.lightbike.fx.PowerUp;
 import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
 
 	public int aPower = 0;
 	public int aPowerMax = 0;
+	
+	public int aPowerUpRatio = 25;
+	
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
 	public boolean aIsCrash;
@@ -34,7 +38,7 @@ public class Player {
 	private int Score;
 	
 	private TrackManager aTrackManager;
-	public final int MaxTracks = 100;
+	public final int MaxTracks = 150;
 	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
 	private int aDamageMin = 5;
@@ -245,7 +249,7 @@ public class Player {
 		float y = getYpos();
 		
 		// FIXME
-		if (aTrailOffset >= tabTracks.length) {
+		if (aTrailOffset > (tabTracks.length-2)) {
 			restartTrack(curTime);
 		}
 		aTrailOffset++;
@@ -395,40 +399,7 @@ public class Player {
 
 		updateBBox(getXpos(), getYpos());
 	}
-/*	
-	public void drawCycleFast2 (long curr_time, long time_dt)
-	{
-		GLES11.glPushMatrix();
-		GLES11.glTranslatef(getXpos(), getYpos(), 0.0f);
 
-		doBikeRotation(curr_time);
-		//Lights.setupLights(gl, LightType.E_CYCLE_LIGHTS);
-
-		// IN
-		//GLES11.glFrontFace(GLES11.GL_CCW);
-		//GLES11.glShadeModel(GLES11.GL_SMOOTH);
-		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
-		GLES11.glEnable(GLES11.GL_LIGHTING);
-		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-		GLES11.glDepthMask(true);
-
-		GLES11.glEnable(GLES11.GL_NORMALIZE);
-		GLES11.glTranslatef(0.0f, 0.0f, LightBikeGame.GetBikeBBox(aPlayerID).v[2] / 2.0f);
-		//GLES11.glEnable(GLES11.GL_CULL_FACE);
-		//gl.glTranslatef((GridSize/2.0f), (GridSize/2.0f), 0.0f);
-		//gl.glTranslatef(_Player._PlayerXpos, _Player._PlayerYpos, 0.0f);
-		// LH HACK
-		LightBikeGame.GetBike(0).Draw(mPlayerColourSpecular, mPlayerColourDiffuse);
-
-		// OUT
-		//GLES11.glDisable(GLES11.GL_CULL_FACE);
-		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
-		GLES11.glDisable(GLES11.GL_LIGHTING);
-		//GLES11.glShadeModel(GLES11.GL_FLAT);
-
-		GLES11.glPopMatrix();		
-	}
-*/
 	public void doCrashTestWalls(Segment Walls[], long curTime)
 	{
 		Segment Current = tabTracks[aTrailOffset];
@@ -642,11 +613,19 @@ public class Player {
 	}
 	
 	public void doDamage (long curTime, int extra) {
+		Random rand = new Random();
+		
+		// PowerUp ???
+		int isPowerUp = rand.nextInt(100);
+		if (isPowerUp < aPowerUpRatio) {
+			// CREATE PowerUp
+			PowerUp.Create(this);
+		}
+
 		// CREATE EXPLOSION
 		Explosion.Create(this);
-
+		
 		// RANDOM DAMAGE
-		Random rand = new Random();
 		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);							
 		aPower -= damage;
 
@@ -666,59 +645,6 @@ public class Player {
 		}
 	}
 
-	/*	
-	public void drawActiveTracks (TrackRenderer render, Camera cam)
-	{
-		if (aTrailHeight > 0.0f) {
-			if (render != null) {
-				render.drawTracks(tabTracks, aTrailOffset, aTrailHeight, mPlayerColourDiffuse);
-			}
-		}
-	}	
-	public boolean isVisible (Camera cam)
-	{
-		Vector3 v1;
-		Vector3 v2;
-		Vector3 tmp = new Vector3(getXpos(),getYpos(),0.0f);
-		int lod_level = 2;
-		float d,s;
-		int i;
-		int LC_LOD = 3;
-		float fov = 120;
-		
-		boolean retValue;
-		
-		v1 = cam._target.sub(cam._cam);
-		v1.Normalise();
-		
-		v2 = cam._cam.sub(tmp);
-		
-		d = v2.Length();
-		
-		for (i=0; (i<LC_LOD) && (d >= LOD_DIST[lod_level][i]); i++);
-		
-		if (i >= LC_LOD) {
-			retValue = false;
-		}
-		else {
-			v2 = tmp.sub(cam._cam);
-			v2.Normalise();
-			
-			s = v1.Dot(v2);
-			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
-			
-			if (s < d - (LightBikeGame.GetBikeBBoxRadius(aPlayerID) * 2.0f)) {
-				retValue = false;
-			}
-			else {
-				retValue = true;
-			}
-			
-		}
-		
-		return retValue;
-	}
-*/	
 	private float getDirAngle (long time)
 	{
 		int last_dir;

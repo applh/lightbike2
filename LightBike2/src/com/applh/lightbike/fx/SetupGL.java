@@ -53,9 +53,11 @@ public class SetupGL {
 	// Textures
 	private static GLTexture SplashTex = null;
 	private static GLTexture ExplodeTex = null;
+	private static GLTexture aPowerUpTex = null;
 //	private static GLTexture SkyBoxTex[] = null; 
 
 	private static int TexIdExplode = -1;
+	private static int TexIdPowerUp = -1;
 	
 // static long aFreeMem = 0;
 	
@@ -94,16 +96,15 @@ public class SetupGL {
 //		aFreeMem = 0;
 		
 		aXenoFont = null;
-		
-//		aScreenW = screenW;
-//		aScreenH = screenH;
-		
+				
 		// reinit textures as context changed
 		SplashTex = null;
-//		SkyBoxTex = null; 
 
 		ExplodeTex = null;
 		TexIdExplode = -1;
+		
+		aPowerUpTex = null;
+		TexIdPowerUp = -1;
 		
 		// reset BB Manager
 		ByteBufferManager.Reinit();
@@ -161,6 +162,7 @@ public class SetupGL {
 		// LOAD TEXTURES
 		PrepareNewGame2();
 		GetExplodeTex();
+		GetTexPowerUp();
 		
 	}
 
@@ -221,7 +223,7 @@ public class SetupGL {
 
 	public static GLTexture GetExplodeTex () {
 		if (ExplodeTex == null) {
-			ExplodeTex = new GLTexture(aContext, R.drawable.gltron_impact , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
+			ExplodeTex = new GLTexture(aContext, R.drawable.impact , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
 			TexIdExplode = ExplodeTex.getTextureID();
 		}
 		return ExplodeTex;
@@ -230,6 +232,19 @@ public class SetupGL {
 	public static int GetTexIdExplode (int index) {
 		GetExplodeTex();
 		return TexIdExplode;
+	}
+
+	public static GLTexture GetTexPowerUp () {
+		if (aPowerUpTex == null) {
+			aPowerUpTex = new GLTexture(aContext, R.drawable.up_1 , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
+			TexIdPowerUp = aPowerUpTex.getTextureID();
+		}
+		return aPowerUpTex;
+	}
+
+	public static int GetTexIdPowerUp (int index) {
+		GetTexPowerUp();
+		return TexIdPowerUp;
 	}
 
 	public static int GetTexIdFloor () {

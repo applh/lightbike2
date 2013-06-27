@@ -37,6 +37,7 @@ import com.applh.lightbike.Game.Camera.CamType;
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.Video.Lighting.LightType;
 import com.applh.lightbike.fx.Explosion;
+import com.applh.lightbike.fx.PowerUp;
 import com.applh.lightbike.fx.SetupGL;
 import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
@@ -213,8 +214,9 @@ public class LightBikeGame {
 		if (i < 1) res = aBikeModel0;
 		else res = aBikeModel1;		
 		
-		if (curFPS < 20) res = aBikeModel1;
-		else if (curFPS > 50) res = aBikeModel0;
+		// FIXME
+		if (avgFPS < 25) res = aBikeModel1;
+		else if (curFPS > 35) res = aBikeModel0;
 		
 		return res;
 	}
@@ -224,6 +226,8 @@ public class LightBikeGame {
 
 		// Explosion
 		Explosion.ReInit0();
+		// PowerUp
+		PowerUp.ReInit0();
 		
 		// Load HUD
 	    HUD = new HUD(this, aContext);
@@ -341,6 +345,7 @@ public class LightBikeGame {
 	    	aTrackManager.reset();
 
 	    Explosion.NewGame();
+	    PowerUp.NewGame();
 	    
 		if (aVisual == null) {
 			aVisual = new Video(aScreenW, aScreenH);
@@ -861,6 +866,7 @@ public class LightBikeGame {
 		
 		drawNextFrameWorld();
 		Explosion.DrawFrame();
+		PowerUp.DrawFrame();
 
 		aTrackManager.drawFrameOldTracks(1.0f);
 
@@ -908,6 +914,7 @@ public class LightBikeGame {
 		}
 
 		aTrackManager.drawFrameOldTracks(0);
+		PowerUp.DrawFrame();
 		Explosion.DrawFrame();
 		
 	}
@@ -1043,7 +1050,7 @@ public class LightBikeGame {
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 		GLES11.glEnable(GLES11.GL_LIGHTING);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-		GLES11.glDepthMask(true);
+		//GLES11.glDepthMask(true);
 
 		GLES11.glEnable(GLES11.GL_NORMALIZE);
 		GLES11.glTranslatef(0.0f, 0.0f, GetBikeBBox(player.aPlayerID).v[2] / 2.0f);

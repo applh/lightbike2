@@ -118,6 +118,7 @@ public class TrackRenderer {
 //			Trailtopfb = ByteBufferManager.CreateFloatBuffer(Trail_top);
 		
 		//GLES11.glEnable(GLES11.GL_LINE_SMOOTH);
+		//GLES11.glDepthMask(true);
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 		GLES11.glDisable(GLES11.GL_CULL_FACE);
 		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);

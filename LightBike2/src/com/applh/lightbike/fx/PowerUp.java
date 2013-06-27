@@ -9,16 +9,16 @@ import android.util.FloatMath;
 
 import com.applh.lightbike.Game.Player;
 
-public class Explosion {
+public class PowerUp {
 
 	// BASIC SET TO DRAW RECTANGLE
 	private static final byte Indices[] = {0,1,2, 0,2,3}; // TL>BL>BR > TL>BR>TR
 	private static final ByteBuffer IndicesBuffer = ByteBufferManager.CreateByteBuffer(Indices);
 	private static final int NbIndices = IndicesBuffer.limit();
 	private static final float TexVertex[] = {
-		1.0f, 0.0f,
-		0.0f, 0.0f,
 		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
 		1.0f, 1.0f,
 	};
 
@@ -28,10 +28,12 @@ public class Explosion {
 	private static int NB_MAX_EXPLOSION;
 	private static int CurExp = 0;
 	private static int CurExpCount = 0;
-	private static Explosion[] ListExp = null;
+	private static PowerUp[] ListExp = null;
 	
 	private float aX = 0.0f;
 	private float aY = 0.0f;
+	private float aZ = 0.0f;
+	
 	private float aDX0 = 0.0f;
 	private float aDY0 = 0.0f;
 	private float aHmax = 20.0f;
@@ -60,20 +62,20 @@ public class Explosion {
 		}
 	}
 
-	public static Explosion Create (Player player) {
+	public static PowerUp Create (Player player) {
 		if (ListExp == null) {
-			ListExp = new Explosion[NB_MAX_EXPLOSION];
+			ListExp = new PowerUp[NB_MAX_EXPLOSION];
 			for (int i=0; i< ListExp.length; i++)
 				ListExp[i] = null;
 		}
 		
-		Explosion res = null;
+		PowerUp res = null;
 		
 		if (CurExp < ListExp.length) {
 			// ADD NEW EXPLOSION
 			res = ListExp[CurExp];
 			if (res == null) { 
-				res = new Explosion(player);
+				res = new PowerUp(player);
 				ListExp[CurExp] = res;
 			}
 			else { 
@@ -90,7 +92,7 @@ public class Explosion {
 
 	public static void DrawFrame () {
 		for (int i=0; i< CurExpCount; i++) {
-			Explosion e = ListExp[i];
+			PowerUp e = ListExp[i];
 			if (e != null) {
 				if (e.aFrameTTL > 0) {
 					e.drawFrameTex();
@@ -103,23 +105,25 @@ public class Explosion {
 		}
 	}
 	
-	public Explosion (Player player) {
+	public PowerUp (Player player) {
 		init(player);
 	}
 
 	public void init (Player player) {
 		aX = player.getXpos();
 		aY = player.getYpos();
+		aZ = 64.0f;
+		
 		aDir = player.getDirection();
-		aW = 16 + player.getSpeed();
-		aHmax = 16 + player.getSpeed();
+		aW = 32;
+		aHmax = 32;
 		//aW = 16;
 		//aHmax = 16;
 		aColor = player.mPlayerColourDiffuse;
 		
 //		aH = aHmax / 2;
 		
-		aFrameTTL0 = Math.round(player.getSpeed() * 16);
+		aFrameTTL0 = 3000;
 		
 		// 0 = BOTTOM / 1 = LEFT / 2 = TOP / 3 = RIGHT
 		switch (aDir) {
@@ -164,33 +168,31 @@ public class Explosion {
 			ratio = 0.5f * ratio * ratio;
 			
 			float factor = FloatMath.cos((float) (0.5f * Math.PI * (1.0f - ratio)));
+			factor=1.0f; // FIXME
 			curH = aHmax * factor;
 			dX = aDX0 * factor;
 			dY = aDY0 * factor;
 			
-			//curH = aHmax * (1.0f - ratio);
-			//dX = dX  * (1.0f - ratio);
-			//dY = dY * (1.0f - ratio);
-			//alpha = 1.0f - (aFrameTTL / aFrameTTL0);
-			//alpha = 0.7f + 0.3f * aFrameTTL / aFrameTTL0;
+			// landing
+			if (aZ > 16) aZ-=0.25f;
 		}
 
 		float tempVertexRect[] = {
 				aX - dX, 
 				aY - dY, 
-				curH,
+				aZ + curH,
 
 				aX - dX, 
 				aY - dY, 
-				-curH,
+				aZ - curH,
 
 				aX + dX, 
 				aY + dY, 
-				-curH,
+				aZ - curH,
 
 				aX + dX, 
 				aY + dY, 
-				curH,
+				aZ + curH,
 			
 			};
 		
@@ -219,7 +221,7 @@ public class Explosion {
 		Random rand = new Random();
 		int iExp = rand.nextInt(10);
 		
-		//GLES11.glDisable(GLES11.GL_CULL_FACE);
+		GLES11.glDisable(GLES11.GL_CULL_FACE);
 
 		//GLES11.glDepthMask(true);
 		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
@@ -228,7 +230,7 @@ public class Explosion {
 		//SetupGL.PushTexFilter(GLES11.GL_LINEAR_MIPMAP_NEAREST, GLES11.GL_NEAREST);
 		// IN
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);	
-		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdExplode(iExp));		
+		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdPowerUp(iExp));		
 		GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
 		GLES11.glTexCoordPointer(2, GLES11.GL_FLOAT, 0, TexBuffer);
 
@@ -240,7 +242,7 @@ public class Explosion {
 		GLES11.glDisableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
 		GLES11.glDisableClientState(GLES11.GL_VERTEX_ARRAY);
 		//SetupGL.PopTexFilter();
-		//GLES11.glEnable(GLES11.GL_CULL_FACE);
+		GLES11.glEnable(GLES11.GL_CULL_FACE);
 
 	}
 
