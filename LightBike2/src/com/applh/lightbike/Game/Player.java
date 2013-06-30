@@ -15,7 +15,6 @@ import android.opengl.GLES11;
 
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.fx.Explosion;
-import com.applh.lightbike.fx.PowerUp;
 import com.applh.lightbike.matrix.Vector3;
 
 public class Player {
@@ -23,7 +22,6 @@ public class Player {
 	public int aPower = 0;
 	public int aPowerMax = 0;
 	
-	public int aPowerUpRatio = 25;
 	
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
@@ -615,12 +613,6 @@ public class Player {
 	public void doDamage (long curTime, int extra) {
 		Random rand = new Random();
 		
-		// PowerUp ???
-		int isPowerUp = rand.nextInt(100);
-		if (isPowerUp < aPowerUpRatio) {
-			// CREATE PowerUp
-			PowerUp.Create(this);
-		}
 
 		// CREATE EXPLOSION
 		Explosion.Create(this);

@@ -25,10 +25,9 @@ public class PowerUp {
 	private static final FloatBuffer TexBuffer = ByteBufferManager.CreateFloatBuffer(TexVertex);
 
 	private static FloatBuffer TmpFB = null;
-	private static int NB_MAX_EXPLOSION;
-	private static int CurExp = 0;
-	private static int CurExpCount = 0;
-	private static PowerUp[] ListExp = null;
+	private static PowerUp aCheckpoint = null;
+	
+	private static float Dist2 = 100.0f;
 	
 	private float aX = 0.0f;
 	private float aY = 0.0f;
@@ -37,89 +36,103 @@ public class PowerUp {
 	private float aDX0 = 0.0f;
 	private float aDY0 = 0.0f;
 	private float aHmax = 20.0f;
+	
+	private float aZ0 = 64.0f;
+	private float aZmin = 8.0f;
+	
+	
 //	private float aH = 20.0f;
 	private float aW = 20.0f;
 	private int aDir = 0; // 0 = BOTTOM / 1 = LEFT / 2 = TOP / 3 = RIGHT  
 	private int aFrameTTL0 = 0;
 	private float aFrameTTL = 0;
-	
-	private float[] aColor;
-	
+		
 	public static void ReInit0 () {
-		ListExp = null;
+		aCheckpoint = null;
 		TmpFB = null;
-		NB_MAX_EXPLOSION = 100;
-		CurExp = 0;
-		CurExpCount = 0;
 	}
 
 	public static void NewGame () {
-		CurExp = 0;
-		CurExpCount = 0;
-		if (ListExp != null) {
-			for (int i=0; i< ListExp.length; i++)
-				ListExp[i] = null;
-		}
+		aCheckpoint = null;
 	}
 
-	public static PowerUp Create (Player player) {
-		if (ListExp == null) {
-			ListExp = new PowerUp[NB_MAX_EXPLOSION];
-			for (int i=0; i< ListExp.length; i++)
-				ListExp[i] = null;
+	public static void ManageRules (float gridSize, Player userP, int ratio) {
+		Random rand = new Random();
+		int isPowerUp = rand.nextInt(100);
+				
+		if (isPowerUp < ratio) {
+			float x = gridSize * (.25f + .5f * rand.nextFloat());
+			float y = gridSize * (.25f + .5f * rand.nextFloat());
+			int dir = rand.nextInt(3);
+			// CREATE POWERUP
+			Create(x, y, dir);
 		}
-		
-		PowerUp res = null;
-		
-		if (CurExp < ListExp.length) {
-			// ADD NEW EXPLOSION
-			res = ListExp[CurExp];
-			if (res == null) { 
-				res = new PowerUp(player);
-				ListExp[CurExp] = res;
-			}
-			else { 
-				res.init(player);
-			}
-			
-			CurExp++;
-			CurExpCount = CurExp;
-			// recycle
-			CurExp = CurExp % ListExp.length;
-		}
-		return res;
-	}
 
-	public static void DrawFrame () {
-		for (int i=0; i< CurExpCount; i++) {
-			PowerUp e = ListExp[i];
-			if (e != null) {
-				if (e.aFrameTTL > 0) {
-					e.drawFrameTex();
-					e.aFrameTTL--;
-				}
-				else {
-					ListExp[i] = null;
-				}
-			}
-		}
 	}
 	
-	public PowerUp (Player player) {
-		init(player);
+	public static PowerUp Create (float x, float y, int dir) {
+		
+		if (aCheckpoint == null) {
+			aCheckpoint = new PowerUp(x, y, dir);
+		}
+
+		return aCheckpoint;
 	}
 
-	public void init (Player player) {
-		aX = player.getXpos();
-		aY = player.getYpos();
-		aZ = 64.0f;
+	public static int checkPlayer (Player player) {
+		int res=0;
 		
-		aDir = player.getDirection();
-		aW = 32;
-		aHmax = 32;
+		float pX = player.getXpos();
+		float pY = player.getYpos();
+
+		if (aCheckpoint != null) {
+			PowerUp elt = aCheckpoint;
+			// trick to always turn the powerup in player direction
+			elt.aDir = player.getDirection();
+			
+			if (elt.aZ > elt.aZmin) {
+				// not active yet
+				res=0;
+			}
+			else {
+				float dist2= (pX-elt.aX)*(pX-elt.aX)+(pY-elt.aY)*(pY-elt.aY);
+				if (dist2 < Dist2) {
+					res=1;					
+					elt.aFrameTTL=0;
+				}					
+			}
+		}
+		
+		return res;
+	}
+	
+	public static void DrawFrame () {
+		if (aCheckpoint != null) {
+			PowerUp e = aCheckpoint;
+			if (e.aFrameTTL > 0) {
+				e.drawFrameTex();
+				e.aFrameTTL--;
+			}
+			else {
+				aCheckpoint=null;
+			}
+		}		
+	}
+	
+	public PowerUp (float x, float y, int dir) {
+		init(x, y, dir);
+	}
+
+	public void init (float x, float y, int dir) {
+		aX = x;
+		aY = y;
+		aZ = aZ0;
+		
+		aDir = dir;
+		aW = 8;
+		aHmax = 8;
 		//aW = 16;
 		//aHmax = 16;
-		aColor = player.mPlayerColourDiffuse;
 		
 //		aH = aHmax / 2;
 		
@@ -130,25 +143,20 @@ public class PowerUp {
 		case 0:
 			aDX0 = aW/2.0f;
 			aDY0 = 0;
-			aY += 0.1f; // move back the explosion before wall
 			break;
 		case 1:
 			aDX0 = 0;
 			aDY0 = aW/2.0f;
-			aX += 0.1f; // move back the explosion before wall
 			break;
 		case 2:
 			aDX0 = aW/2.0f;
 			aDY0 = 0;
-			aY += -0.1f; // move back the explosion before wall
 			break;
 		case 3:
 		default:
 			aDX0 = 0;
 			aDY0 = aW/2.0f;
-			aX += -0.1f; // move back the explosion before wall
-			break;
-				
+			break;				
 		}
 
 		aFrameTTL = aFrameTTL0;
@@ -156,6 +164,28 @@ public class PowerUp {
 	}
 
 	public void drawFrameTex () {
+
+		// 0 = BOTTOM / 1 = LEFT / 2 = TOP / 3 = RIGHT
+		switch (aDir) {
+		case 0:
+			aDX0 = aW/2.0f;
+			aDY0 = 0;
+			break;
+		case 1:
+			aDX0 = 0;
+			aDY0 = aW/2.0f;
+			break;
+		case 2:
+			aDX0 = aW/2.0f;
+			aDY0 = 0;
+			break;
+		case 3:
+		default:
+			aDX0 = 0;
+			aDY0 = aW/2.0f;
+			break;				
+		}
+		
 		float curH = aHmax;
 		float alpha = 1.0f;
 		
@@ -174,7 +204,7 @@ public class PowerUp {
 			dY = aDY0 * factor;
 			
 			// landing
-			if (aZ > 16) aZ-=0.25f;
+			if (aZ > aZmin) aZ-=0.25f;
 		}
 
 		float tempVertexRect[] = {
@@ -196,17 +226,11 @@ public class PowerUp {
 			
 			};
 		
-		float red = aColor[0];
-		float green = aColor[1];
-		float blue = aColor[2];
 		// FIXME
 		// MAKE BRIGHTER ?
-//		red = 0.6f + 0.4f * red * red;
-//		green = 0.6f + 0.4f * green * green;
-//		blue = 0.6f + 0.4f * blue * blue;
-		red = 1.0f;
-		green = 1.0f;
-		blue = 1.0f;
+		float red = 1.0f;
+		float green = 1.0f;
+		float blue = 1.0f;
 		
 		if (TmpFB == null) {
 			TmpFB = ByteBufferManager.CreateFloatBuffer(tempVertexRect);
@@ -229,6 +253,7 @@ public class PowerUp {
 
 		//SetupGL.PushTexFilter(GLES11.GL_LINEAR_MIPMAP_NEAREST, GLES11.GL_NEAREST);
 		// IN
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);	
 		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdPowerUp(iExp));		
 		GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
@@ -243,6 +268,7 @@ public class PowerUp {
 		GLES11.glDisableClientState(GLES11.GL_VERTEX_ARRAY);
 		//SetupGL.PopTexFilter();
 		GLES11.glEnable(GLES11.GL_CULL_FACE);
+		GLES11.glDisable(GLES11.GL_BLEND);
 
 	}
 

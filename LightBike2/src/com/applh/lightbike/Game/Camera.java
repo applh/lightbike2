@@ -1,5 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -49,7 +48,7 @@ public class Camera {
 	// LH TODO: review interdependence
 	//private Player _PlayerData;
 	public Vector3 _target = new Vector3();
-	public Vector3 _cam = new Vector3();
+	public Vector3 aCam = new Vector3();
 	private float _movement[] = new float[4]; // indices CAM_R, CAM_CHI, CAM_PHI, CAM_PHI_OFFSET
 	
 	private static final float CAM_CIRCLE_DIST = 15.0f;
@@ -148,9 +147,9 @@ public class Camera {
 		_target.v[1] = player.getYpos();
 		_target.v[2] = 0.0f;
 		
-		_cam.v[0] = player.getXpos()  + CAM_CIRCLE_DIST;
-		_cam.v[1] = player.getYpos();
-		_cam.v[2] = CAM_CIRCLE_Z;
+		aCam.v[0] = player.getXpos()  + CAM_CIRCLE_DIST;
+		aCam.v[1] = player.getYpos();
+		aCam.v[2] = CAM_CIRCLE_Z;
 		
 	}
 	
@@ -234,9 +233,9 @@ public class Camera {
 		TmpDest[1] = y + r * FloatMath.sin(phi) * FloatMath.sin(chi);
 		TmpDest[2] = r * FloatMath.cos(chi);
 		
-		_cam.v[0] = TmpDest[0];
-		_cam.v[1] = TmpDest[1];
-		_cam.v[2] = TmpDest[2];
+		aCam.v[0] = TmpDest[0];
+		aCam.v[1] = TmpDest[1];
+		aCam.v[2] = TmpDest[2];
 
 		// LH NOTE
 		// tdest is for target bike ? 
@@ -348,9 +347,9 @@ public class Camera {
 				break;
 		}
 		
-		_cam.v[0] = TmpDest[0];
-		_cam.v[1] = TmpDest[1];
-		_cam.v[2] = TmpDest[2];
+		aCam.v[0] = TmpDest[0];
+		aCam.v[1] = TmpDest[1];
+		aCam.v[2] = TmpDest[2];
 		
 		_target.v[0] = TmpTDest[0];
 		_target.v[1] = TmpTDest[1];
@@ -360,7 +359,7 @@ public class Camera {
 	
 	public FloatBuffer getCamBuffer ()
 	{
-		return ByteBufferManager.ReuseFB3(_cam.v);
+		return ByteBufferManager.ReuseFB3(aCam.v);
 	}
 	
 	public void doCameraMovement (Player PlayerData, long CurrentTime, long dt)
@@ -372,7 +371,7 @@ public class Camera {
 	{
 		Vector3 x,y,z;
 		
-		z = _cam.sub(_target);
+		z = aCam.sub(_target);
 		z.Normalise();
 		x = TmpUp.Cross(z);
 		y = z.Cross(x);
@@ -403,7 +402,7 @@ public class Camera {
 		GLES11.glMultMatrixf(M);
 		
 		// Translate Eye to origin
-		GLES11.glTranslatef(-_cam.v[0], -_cam.v[1], -_cam.v[2]);
+		GLES11.glTranslatef(-aCam.v[0], -aCam.v[1], -aCam.v[2]);
 	}
 	
 }

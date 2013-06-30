@@ -188,6 +188,7 @@ public class WorldGraphics {
 		GLES11.glFrontFace(GLES11.GL_CCW);
 		GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		// CAMERA CAN BE BEHIND WALLS
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		GLES11.glEnable(GLES11.GL_CULL_FACE);
 		//GLES11.glEnable(GLES11.GL_TEXTURE_WRAP_S);
@@ -209,6 +210,7 @@ public class WorldGraphics {
 		
 		GLES11.glDisable(GLES11.GL_CULL_FACE);
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 		
 	}
 
@@ -217,6 +219,7 @@ public class WorldGraphics {
 		int i,j,l;
 		
 		//GLES11.glShadeModel(GLES11.GL_FLAT);
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdFloor());
 		
@@ -263,14 +266,15 @@ public class WorldGraphics {
 				GLES11.glDisableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
 			}
 		}
-		//GLES11.glDisable(GLES11.GL_BLEND);
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 	}
 
 	public void drawSkyBox1 ()
 	{
 		// LH HACK
 		//GLES11.glFrontFace(GLES11.GL_CCW); // we want texture inside the box
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		GLES11.glDepthMask(false);
 		GLES11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -294,6 +298,7 @@ public class WorldGraphics {
 		// LH HACK
 		GLES11.glFrontFace(GLES11.GL_CW);
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 		GLES11.glDepthMask(true);
 
 	}

@@ -38,77 +38,6 @@ public class TrackRenderer {
 		//Trailtopfb = null;
 	}
 
-	/*
-	public void drawTrailLines2 (Segment segs[],int trail_offset, float trail_height)
-	{		
-		int segOffset;
-
-		if (Trailtopfb == null)
-			Trailtopfb = ByteBufferManager.CreateFloatBuffer(Trail_top);
-		
-		GLES11.glDisable(GLES11.GL_LIGHTING);
-		
-		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
-		GLES11.glEnableClientState(GLES11.GL_COLOR_ARRAY);
-	
-		GLES11.glColorPointer(4, GLES11.GL_FLOAT, 0, Trailtopfb);
-
-		for (segOffset = 0; segOffset <= trail_offset; segOffset++) {
-			// Dont change alpha based on dist yet
-			GLES11.glColorPointer(4, GLES11.GL_FLOAT, 0, Trailtopfb);
-			GLES11.glColor4f(1.0f, 1.0f, 1.0f, 0.4f);
-			
-			float tempvertex[] = {
-				segs[segOffset].vStart.v[0], 
-				segs[segOffset].vStart.v[1], 
-				trail_height,
-				
-				segs[segOffset].vStart.v[0] + segs[segOffset].vDirection.v[0],
-				segs[segOffset].vStart.v[1] + segs[segOffset].vDirection.v[1],
-				trail_height
-
-			};
-
-			float tempvertex2[] = {
-					segs[segOffset].vStart.v[0], 
-					segs[segOffset].vStart.v[1], 
-					0,
-					
-					segs[segOffset].vStart.v[0] + segs[segOffset].vDirection.v[0],
-					segs[segOffset].vStart.v[1] + segs[segOffset].vDirection.v[1],
-					0
-
-				};
-
-			if (aFb == null) {
-				aFb = ByteBufferManager.CreateFloatBuffer(tempvertex);
-			}
-			else {
-			    aFb.rewind();
-			    aFb.put(tempvertex);
-			    aFb.rewind();
-			}
-			GLES11.glVertexPointer(3, GLES11.GL_FLOAT, 0, aFb);
-			GLES11.glDrawArrays(GLES11.GL_LINES, 0, 2);
-
-			if (aFb2 == null) {
-				aFb2 = ByteBufferManager.CreateFloatBuffer(tempvertex2);
-			}
-			else {
-				aFb2.rewind();
-				aFb2.put(tempvertex2);
-				aFb2.rewind();
-			}
-			
-			//fb2 = GraphicUtils.CreateFloatBuffer(tempvertex2);
-			GLES11.glVertexPointer(3, GLES11.GL_FLOAT, 0, aFb2);
-			GLES11.glDrawArrays(GLES11.GL_LINES, 0, 2);
-		}
-
-		
-		GLES11.glDisableClientState(GLES11.GL_COLOR_ARRAY);
-	}
-*/
 	
 	public void drawTracks (Segment segs[], int trail_offset, float trail_height, float[] color)
 	{		
@@ -119,6 +48,7 @@ public class TrackRenderer {
 		
 		//GLES11.glEnable(GLES11.GL_LINE_SMOOTH);
 		//GLES11.glDepthMask(true);
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 		GLES11.glDisable(GLES11.GL_CULL_FACE);
 		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
@@ -184,6 +114,7 @@ public class TrackRenderer {
 		GLES11.glDisableClientState(GLES11.GL_VERTEX_ARRAY);
 		// OUT
 		GLES11.glEnable(GLES11.GL_CULL_FACE);
+		GLES11.glDisable(GLES11.GL_BLEND);
 
 	}
 

@@ -108,6 +108,7 @@ public class HUD {
 	public void drawInfo ()
 	{
 		//GLES11.glDisable(GLES11.GL_DEPTH_TEST);
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		game.aVisual.rasonly();
 				
@@ -122,16 +123,17 @@ public class HUD {
 		drawConsole();
 
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 	}
 
 	
 	public void drawInfoHome ()
 	{
-		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		GLES11.glEnable(GLES11.GL_BLEND);
+		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+
 		game.aVisual.rasonly();
 				
-
 		// Draw fps
 		if(dispFPS)
 			drawFPS();
@@ -144,6 +146,7 @@ public class HUD {
 		drawCursor();
 		
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 
 	}
 	

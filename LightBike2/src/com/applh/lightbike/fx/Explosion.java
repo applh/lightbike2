@@ -227,6 +227,7 @@ public class Explosion {
 
 		//SetupGL.PushTexFilter(GLES11.GL_LINEAR_MIPMAP_NEAREST, GLES11.GL_NEAREST);
 		// IN
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);	
 		GLES11.glBindTexture(GLES11.GL_TEXTURE_2D, SetupGL.GetTexIdExplode(iExp));		
 		GLES11.glEnableClientState(GLES11.GL_TEXTURE_COORD_ARRAY);
@@ -241,6 +242,7 @@ public class Explosion {
 		GLES11.glDisableClientState(GLES11.GL_VERTEX_ARRAY);
 		//SetupGL.PopTexFilter();
 		//GLES11.glEnable(GLES11.GL_CULL_FACE);
+		GLES11.glDisable(GLES11.GL_BLEND);
 
 	}
 

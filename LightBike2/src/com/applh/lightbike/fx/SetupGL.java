@@ -128,10 +128,7 @@ public class SetupGL {
 	public void myInitSurface () {
 		
 		// GENERAL SETUP
-		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-
-		//GLES11.glDisable(GLES11.GL_BLEND);
 
 		GLES11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		GLES11.glClear(GLES11.GL_COLOR_BUFFER_BIT | GLES11.GL_DEPTH_BUFFER_BIT);
@@ -152,7 +149,6 @@ public class SetupGL {
 		
 		// GENERAL SETUP
 		GLES11.glShadeModel(GLES11.GL_SMOOTH);
-		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glBlendFunc(GLES11.GL_SRC_ALPHA, GLES11.GL_ONE_MINUS_SRC_ALPHA);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
 

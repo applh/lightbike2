@@ -127,6 +127,7 @@ public class LightBikeGame {
 	public boolean aActBrake = false;
 	public boolean aActSpecial = false;
 
+	public int aPowerUpRatio = 10;
 	
 	public float aMoveX=-1.0f;
 	public float aMoveY=-1.0f;
@@ -215,8 +216,21 @@ public class LightBikeGame {
 		else res = aBikeModel1;		
 		
 		// FIXME
-		if (avgFPS < 25) res = aBikeModel1;
-		else if (curFPS > 35) res = aBikeModel0;
+		if (avgFPS < 30) {
+			res = aBikeModel1;
+		}
+		else if (curFPS < 40) {
+			if (i < 1)
+				res = aBikeModel0;
+			else
+				res = aBikeModel1;				
+		}
+		else if (curFPS > 50) {
+			if (i < (curFPS/10))
+				res = aBikeModel0;
+			else
+				res = aBikeModel1;				
+		}
 		
 		return res;
 	}
@@ -571,6 +585,7 @@ public class LightBikeGame {
 			
 			// don't activate bots if game not started			
 			playAI();
+			playPowerUp();
 		}
 		
 		// RENDER FRAME
@@ -578,14 +593,28 @@ public class LightBikeGame {
 		
 	}
 
-	private void playAI () {
-		
-		if (aCurrentBikes < 3) {
-			// more agressivity at the end
-			//aComputerAI.SAVE_T_DIFF =  (2 - aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.SAVE_T_DIFF0;
-			//aComputerAI.HOPELESS_T =  (aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.HOPELESS_T0;
+	private void playPowerUp () {
+		Player userP = aPlayers[OWN_PLAYER];
+		// MANAGE POWERUP
+		PowerUp.ManageRules(aGrideSize0, userP, aPowerUpRatio);
+
+		int check = PowerUp.checkPlayer(userP);
+		if (check >0) {
+			Player curP = null;
+			for (int player = 0; player < aNbPlayers0; player++) {
+				curP=aPlayers[player];
+				if (player != OWN_PLAYER) {
+					curP.doDamage(aTimeNow, 0);
+				}
+				else {
+					curP.aPower+=10;
+				}
+			}			
 		}
-		
+	}
+	
+	private void playAI () {
+				
 		// round robin AI to speed up frame time
 		Player bot = aPlayers[aiCount]; 
     	if ((bot != null) && !bot.isCrashed())	{
@@ -716,7 +745,6 @@ public class LightBikeGame {
 				}
 			}
 			else {
-//				if (aPlayers[p2].getSpeed() > 0.0f) {						
 				if (! aPlayers[p2].isCrashed()) {
 					boOtherPlayersActive = true;
 				}
@@ -804,14 +832,14 @@ public class LightBikeGame {
 	
 	public boolean isVisible (Player player, Camera cam)
 	{
-		if (curFPS > 35) return true;		
+		if (curFPS > 60) return true;		
 		
 		Vector3 v1;
 		Vector3 v2;
 		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f);
 		int lod_level = 2;
 
-		if (curFPS > 35) lod_level=1;
+		if (curFPS > 40) lod_level=1;
 
 		float d,s;
 		int i;
@@ -820,10 +848,10 @@ public class LightBikeGame {
 		
 		boolean retValue;
 		
-		v1 = cam._target.sub(cam._cam);
+		v1 = cam._target.sub(cam.aCam);
 		v1.Normalise();
 		
-		v2 = cam._cam.sub(tmp);
+		v2 = cam.aCam.sub(tmp);
 		
 		d = v2.Length();
 		
@@ -833,7 +861,7 @@ public class LightBikeGame {
 			retValue = false;
 		}
 		else {
-			v2 = tmp.sub(cam._cam);
+			v2 = tmp.sub(cam.aCam);
 			v2.Normalise();
 			
 			s = v1.Dot(v2);
@@ -850,13 +878,11 @@ public class LightBikeGame {
 		
 		return retValue;
 	}
-	
-
 		
 	private void drawNextFrame () {
 
 		// START DRAWING NEW FRAME
-		if (curFPS > 20) 
+		if (curFPS > 25) 
 			aTrackRenderer.aAlphaMin=0.0f;
 		else
 			aTrackRenderer.aAlphaMin=1.0f;
