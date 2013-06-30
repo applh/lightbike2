@@ -61,8 +61,8 @@ public class PowerUp {
 		int isPowerUp = rand.nextInt(100);
 				
 		if (isPowerUp < ratio) {
-			float x = gridSize * (.25f + .5f * rand.nextFloat());
-			float y = gridSize * (.25f + .5f * rand.nextFloat());
+			float x = gridSize * (.2f + .6f * rand.nextFloat());
+			float y = gridSize * (.2f + .6f * rand.nextFloat());
 			int dir = rand.nextInt(3);
 			// CREATE POWERUP
 			Create(x, y, dir);
@@ -204,7 +204,7 @@ public class PowerUp {
 			dY = aDY0 * factor;
 			
 			// landing
-			if (aZ > aZmin) aZ-=0.25f;
+			if (aZ > aZmin) aZ-=0.10f;
 		}
 
 		float tempVertexRect[] = {

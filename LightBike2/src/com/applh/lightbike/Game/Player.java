@@ -39,8 +39,8 @@ public class Player {
 	public final int MaxTracks = 150;
 	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
-	private int aDamageMin = 5;
-	private int aDamageRange = 20;
+	private int aDamageMin = 10;
+	private int aDamageRange = 30;
 	
 	private float aCrashRotationZ = 0;
 	
@@ -435,7 +435,7 @@ public class Player {
 					Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 					Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 					
-					doDamage(curTime, 0);
+					doDamage(curTime, 0, 0, 100);
 					if (aPower > 0) {
 						aSpeed = aSpeedRef;
 					}
@@ -581,7 +581,7 @@ public class Player {
 								Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 								
 								// RANDOM DAMAGE
-								doDamage(curTime, testPlayer.aTrailOffset/4);
+								doDamage(curTime, testPlayer.aTrailOffset/4, 0, 100);
 								
 								// kamikaze counts
 								testPlayer.restartTrack(curTime);
@@ -610,15 +610,18 @@ public class Player {
 		aCrashRotationTTL++;				
 	}
 	
-	public void doDamage (long curTime, int extra) {
+	public void doDamage (long curTime, int extra, int minD, int maxD) {
 		Random rand = new Random();
 		
-
 		// CREATE EXPLOSION
 		Explosion.Create(this);
 		
 		// RANDOM DAMAGE
-		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);							
+		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);
+
+		if (damage < minD) damage = minD;
+		else if (damage > maxD) damage = maxD;
+		
 		aPower -= damage;
 
 		if (aPower <= 0)  {

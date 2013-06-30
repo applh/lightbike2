@@ -127,7 +127,10 @@ public class LightBikeGame {
 	public boolean aActBrake = false;
 	public boolean aActSpecial = false;
 
-	public int aPowerUpRatio = 10;
+	public int aPowerUpDamage0 = 10;
+	public int aPowerUpDamage = 10;
+	public int aPowerUpRatio = 2;
+	public Vector3 tmpMiddle = new Vector3();
 	
 	public float aMoveX=-1.0f;
 	public float aMoveY=-1.0f;
@@ -241,6 +244,7 @@ public class LightBikeGame {
 		// Explosion
 		Explosion.ReInit0();
 		// PowerUp
+		aPowerUpDamage=aPowerUpDamage0;
 		PowerUp.ReInit0();
 		
 		// Load HUD
@@ -604,12 +608,13 @@ public class LightBikeGame {
 			for (int player = 0; player < aNbPlayers0; player++) {
 				curP=aPlayers[player];
 				if (player != OWN_PLAYER) {
-					curP.doDamage(aTimeNow, 0);
+					curP.doDamage(aTimeNow, 0, aPowerUpDamage, aPowerUpDamage);
 				}
 				else {
-					curP.aPower+=10;
+					curP.aPower+=aPowerUpDamage;
 				}
-			}			
+			}
+			aPowerUpDamage+=aPowerUpDamage0;
 		}
 	}
 	
@@ -832,11 +837,46 @@ public class LightBikeGame {
 	
 	public boolean isVisible (Player player, Camera cam)
 	{
+		float viewSize = .25f;
+		
+		// FIXME
+		if (curFPS > 60) viewSize = .4f;		
+		else if (curFPS > 50) viewSize = .325f;
+		else if (curFPS > 40) viewSize = .300f;
+		else if (curFPS > 30) viewSize = .275f;
+		else if (curFPS < 20) viewSize = .200f;
+		
+		boolean retValue = false;
+
+		cam.aCam.middle(cam.aTarget, tmpMiddle);
+		
+		// FIXME
+		float dM = viewSize * aGrideSize0;
+		
+		// build visible rectangle
+		float inXmin = tmpMiddle.v[0] - dM;
+		float inYmin = tmpMiddle.v[1] - dM;
+		
+		float inXmax = tmpMiddle.v[0] + dM;
+		float inYmax = tmpMiddle.v[1] + dM;
+
+		float tmpX = player.getXpos();
+		float tmpY = player.getYpos();
+		
+		if ((tmpX > inXmin) && (tmpX < inXmax) && (tmpY > inYmin) && (tmpY < inYmax)) {
+			retValue= true;		
+		}
+		
+		return retValue;
+	}
+	
+	public boolean isVisible_old (Player player, Camera cam)
+	{
 		if (curFPS > 60) return true;		
 		
 		Vector3 v1;
 		Vector3 v2;
-		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f);
+		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f); // bike position
 		int lod_level = 2;
 
 		if (curFPS > 40) lod_level=1;
@@ -848,7 +888,7 @@ public class LightBikeGame {
 		
 		boolean retValue;
 		
-		v1 = cam._target.sub(cam.aCam);
+		v1 = cam.aTarget.sub(cam.aCam); // camera direction vector
 		v1.Normalise();
 		
 		v2 = cam.aCam.sub(tmp);

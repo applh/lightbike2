@@ -47,8 +47,8 @@ public class Camera {
 	
 	// LH TODO: review interdependence
 	//private Player _PlayerData;
-	public Vector3 _target = new Vector3();
-	public Vector3 aCam = new Vector3();
+	public Vector3 aTarget = new Vector3(); // point of focus
+	public Vector3 aCam = new Vector3(); // current camera position
 	private float _movement[] = new float[4]; // indices CAM_R, CAM_CHI, CAM_PHI, CAM_PHI_OFFSET
 	
 	private static final float CAM_CIRCLE_DIST = 15.0f;
@@ -143,9 +143,9 @@ public class Camera {
 			setTravelling(true);
 		}
 		
-		_target.v[0] = player.getXpos();
-		_target.v[1] = player.getYpos();
-		_target.v[2] = 0.0f;
+		aTarget.v[0] = player.getXpos();
+		aTarget.v[1] = player.getYpos();
+		aTarget.v[2] = 0.0f;
 		
 		aCam.v[0] = player.getXpos()  + CAM_CIRCLE_DIST;
 		aCam.v[1] = player.getYpos();
@@ -256,9 +256,9 @@ public class Camera {
 				
 		}
 
-		_target.v[0] = TmpTDest[0];
-		_target.v[1] = TmpTDest[1];
-		_target.v[2] = TmpTDest[2];
+		aTarget.v[0] = TmpTDest[0];
+		aTarget.v[1] = TmpTDest[1];
+		aTarget.v[2] = TmpTDest[2];
 
  	}
 	
@@ -351,9 +351,9 @@ public class Camera {
 		aCam.v[1] = TmpDest[1];
 		aCam.v[2] = TmpDest[2];
 		
-		_target.v[0] = TmpTDest[0];
-		_target.v[1] = TmpTDest[1];
-		_target.v[2] = TmpTDest[2];
+		aTarget.v[0] = TmpTDest[0];
+		aTarget.v[1] = TmpTDest[1];
+		aTarget.v[2] = TmpTDest[2];
 		
 	}
 	
@@ -371,7 +371,7 @@ public class Camera {
 	{
 		Vector3 x,y,z;
 		
-		z = aCam.sub(_target);
+		z = aCam.sub(aTarget);
 		z.Normalise();
 		x = TmpUp.Cross(z);
 		y = z.Cross(x);

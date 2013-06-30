@@ -55,7 +55,16 @@ public class Vector3 {
 		
 		return res;
 	}
-	
+
+	public void middle (Vector3 V1, Vector3 middle)
+	{
+		if (middle == null) middle = new Vector3();
+		
+		middle.v[0] = 0.5f * (v[0] + V1.v[0]);
+		middle.v[1] = 0.5f * (v[1] + V1.v[1]);
+		middle.v[2] = 0.5f * (v[2] + V1.v[2]);	
+	}
+
 	public Vector3 sub(Vector3 V1)
 	{
 		Vector3 res = new Vector3();
@@ -111,7 +120,7 @@ public class Vector3 {
 	{
 		float d = Length();
 		
-		if(d != 0) {
+		if (d != 0) {
 			v[0] /= d;
 			v[1] /= d;
 			v[2] /= d;
