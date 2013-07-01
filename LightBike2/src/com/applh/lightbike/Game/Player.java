@@ -40,12 +40,13 @@ public class Player {
 	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
 	private int aDamageMin = 10;
-	private int aDamageRange = 30;
+	private int aDamageRange = 40;
 	
 	private float aCrashRotationZ = 0;
 	
 	public int aTrailOffset;
 	public float aTrailHeight;
+	public int aMaxTrail = 5;
 	
 	private float aSpeedRef;
 	private int aSpeedKmh;	
@@ -174,7 +175,8 @@ public class Player {
 		tabTracks[aTrailOffset].vDirection.v[1] = 0.0f;
 		
 		aTrailHeight = TRAIL_HEIGHT;
-
+		aMaxTrail = 5;
+		
 		// RESET BOUNDING BOX
 		aBBminX = tabTracks[aTrailOffset].vStart.v[0];
 		aBBmaxX = aBBminX;
@@ -250,6 +252,10 @@ public class Player {
 		if (aTrailOffset > (tabTracks.length-2)) {
 			restartTrack(curTime);
 		}
+		else if (aTrailOffset > aMaxTrail) {
+			restartTrack(curTime);			
+		}
+		
 		aTrailOffset++;
 		tabTracks[aTrailOffset] = new BikeTracks(this);
 		tabTracks[aTrailOffset].vStart.v[0] = x;
@@ -427,7 +433,7 @@ public class Player {
 		}
 		
 		for (int j=0; j < 4; j++) {
-			V = Current.Intersect(Walls[j]);
+			V = Current.Intersect2(Walls[j]);
 			
 			if (V != null) {
 				if (Current.t1 >= 0.0f && Current.t1 < 1.0f && Current.t2 >= 0.0f && Current.t2 < 1.0f) {
@@ -572,7 +578,7 @@ public class Player {
 						
 						Wall = testPlayer.getTrail(k);
 						
-						V = Current.Intersect(Wall);
+						V = Current.Intersect2(Wall);
 						
 						if (V != null) {
 							if (Current.t1 >= 0.0f && Current.t1 < 1.0f && Current.t2 >= 0.0f && Current.t2 < 1.0f) {
@@ -611,13 +617,12 @@ public class Player {
 	}
 	
 	public void doDamage (long curTime, int extra, int minD, int maxD) {
-		Random rand = new Random();
 		
 		// CREATE EXPLOSION
 		Explosion.Create(this);
 		
 		// RANDOM DAMAGE
-		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);
+		int damage = aDamageMin + extra + aRand.nextInt(aDamageRange);
 
 		if (damage < minD) damage = minD;
 		else if (damage > maxD) damage = maxD;

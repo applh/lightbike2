@@ -227,7 +227,7 @@ public class ComputerAI {
 		
 		TmpInter2.vDirection.Scale(TmpPlayer.vDirection.Length2());
 		
-		TmpInter1.Intersect(TmpInter2);
+		TmpInter1.Intersect2(TmpInter2);
 		
 		t_opponent = TmpInter1.t1;
 		t_player = TmpInter1.t2;
@@ -380,25 +380,25 @@ public class ComputerAI {
 				if (i == player && j == Players[i].aTrailOffset)
 					break;
 				
-				v = TmpDistance[E_FRONT].Intersect(wall[j]);
+				v = TmpDistance[E_FRONT].Intersect2(wall[j]);
 				t1 = TmpDistance[E_FRONT].t1;
 				t2 = TmpDistance[E_FRONT].t2;
 				if( (v != null) && t1 > 0.0f && t1 < front && t2 >= 0.0f && t2 <= 1.0f)
 					front = t1;
 				
-				v = TmpDistance[E_LEFT].Intersect(wall[j]);
+				v = TmpDistance[E_LEFT].Intersect2(wall[j]);
 				t1 = TmpDistance[E_LEFT].t1;
 				t2 = TmpDistance[E_LEFT].t2;
 				if( (v != null) && t1 > 0.0f && t1 < left && t2 >= 0.0f && t2 <= 1.0f)
 					left = t1;
 
-				v = TmpDistance[E_RIGHT].Intersect(wall[j]);
+				v = TmpDistance[E_RIGHT].Intersect2(wall[j]);
 				t1 = TmpDistance[E_RIGHT].t1;
 				t2 = TmpDistance[E_RIGHT].t2;
 				if( (v != null) && t1 > 0.0f && t1 < right && t2 >= 0.0f && t2 <= 1.0f)
 					right = t1;
 
-				v = TmpDistance[E_BACKLEFT].Intersect(wall[j]);
+				v = TmpDistance[E_BACKLEFT].Intersect2(wall[j]);
 				t1 = TmpDistance[E_BACKLEFT].t1;
 				t2 = TmpDistance[E_BACKLEFT].t2;
 				if( (v != null) && t1 > 0.0f && t1 < backleft && t2 >= 0.0f && t2 <= 1.0f)
@@ -408,25 +408,25 @@ public class ComputerAI {
 		}
 		
 		for (i=0; i < 4; i++) {
-			v = TmpDistance[E_FRONT].Intersect(Walls[i]);
+			v = TmpDistance[E_FRONT].Intersect2(Walls[i]);
 			t1 = TmpDistance[E_FRONT].t1;
 			t2 = TmpDistance[E_FRONT].t2;
 			if( (v != null) && t1 > 0.0f && t1 < front && t2 >= 0.0f && t2 <= 1.0f)
 				front = t1;
 			
-			v = TmpDistance[E_LEFT].Intersect(Walls[i]);
+			v = TmpDistance[E_LEFT].Intersect2(Walls[i]);
 			t1 = TmpDistance[E_LEFT].t1;
 			t2 = TmpDistance[E_LEFT].t2;
 			if( (v != null) && t1 > 0.0f && t1 < left && t2 >= 0.0f && t2 <= 1.0f)
 				left = t1;
 
-			v = TmpDistance[E_RIGHT].Intersect(Walls[i]);
+			v = TmpDistance[E_RIGHT].Intersect2(Walls[i]);
 			t1 = TmpDistance[E_RIGHT].t1;
 			t2 = TmpDistance[E_RIGHT].t2;
 			if( (v != null) && t1 > 0.0f && t1 < right && t2 >= 0.0f && t2 <= 1.0f)
 				right = t1;
 
-			v = TmpDistance[E_BACKLEFT].Intersect(Walls[i]);
+			v = TmpDistance[E_BACKLEFT].Intersect2(Walls[i]);
 			t1 = TmpDistance[E_BACKLEFT].t1;
 			t2 = TmpDistance[E_BACKLEFT].t2;
 			if( (v != null) && t1 > 0.0f && t1 < backleft && t2 >= 0.0f && t2 <= 1.0f)

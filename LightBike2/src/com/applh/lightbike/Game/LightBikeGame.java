@@ -58,12 +58,15 @@ public class LightBikeGame {
 	
 	// Define arena setting 
 	private static float aGrideSize0 = 480.0f;
+	private static float aViewSize0 = 480.0f;
+	
 	private float aSpeed0 = 10.0f;
 	private static int aColor0 = 2;
 
 	public static final int MAX_PLAYERS = 24;
 	public static final int OWN_PLAYER = 0;
 	public static int aNbPlayers0 = 0;
+	public int aNbPlayers1 = 2;
 	public static int aCurrentBikes = 0;
 		
 	private WorldGraphics aWorld = null;
@@ -160,6 +163,7 @@ public class LightBikeGame {
 		aColor0 = 2;
 
 		aNbPlayers0 = 0;
+		aNbPlayers0 = 1;
 		aCurrentBikes = 0;
 		aTrackManager = null;
 		
@@ -244,7 +248,6 @@ public class LightBikeGame {
 		// Explosion
 		Explosion.ReInit0();
 		// PowerUp
-		aPowerUpDamage=aPowerUpDamage0;
 		PowerUp.ReInit0();
 		
 		// Load HUD
@@ -253,6 +256,7 @@ public class LightBikeGame {
 
 		// DEFAULT VALUES
 		aNbPlayers0 = 6;
+		aNbPlayers1 = 2;
 		aGrideSize0 = 480.0f;
 		aSpeed0 = 10.0f;
 		aColor0 = 2;
@@ -329,13 +333,25 @@ public class LightBikeGame {
 	    // reload textures
 	    SetupGL.PrepareNewGame2();
 	    
-		// TO IMPROVE
+		// FIXME
 	    aNbPlayers0 = aPrefs.numberOfPlayers();
+		// users prefs set the limit of bikes
+		if (aNbPlayers0 < aNbPlayers1) aNbPlayers1 = aNbPlayers0;
+
+		aNbPlayers0 = aNbPlayers1;
+		
+		// some protection
+		if (aNbPlayers0 < 2) aNbPlayers0 = 2;
+		
 	    aCurrentBikes = aNbPlayers0;
 	    if (aPlayers == null) {
 	    	aPlayers = new Player[MAX_PLAYERS];
 	    }
-	    resetScores();
+
+	    // reset damage by powerup
+	    aPowerUpDamage =aPowerUpDamage0;
+
+		resetScores();
 
         // WORLD
 	    if (checkWorldRebuild()) {
@@ -609,9 +625,14 @@ public class LightBikeGame {
 				curP=aPlayers[player];
 				if (player != OWN_PLAYER) {
 					curP.doDamage(aTimeNow, 0, aPowerUpDamage, aPowerUpDamage);
+					// FIXME
+					curP.aMaxTrail+=5;
 				}
 				else {
-					curP.aPower+=aPowerUpDamage;
+					//curP.aPower+=aPowerUpDamage;
+					curP.doDamage(aTimeNow, 0, -aPowerUpDamage0, -aPowerUpDamage0);
+					// FIXME
+					curP.aMaxTrail+=5;
 				}
 			}
 			aPowerUpDamage+=aPowerUpDamage0;
@@ -848,10 +869,12 @@ public class LightBikeGame {
 		
 		boolean retValue = false;
 
-		cam.aCam.middle(cam.aTarget, tmpMiddle);
+		// FIXME
+		//cam.aCam.middle(cam.aTarget, tmpMiddle);
+		tmpMiddle=cam.aTarget;
 		
 		// FIXME
-		float dM = viewSize * aGrideSize0;
+		float dM = viewSize * aViewSize0;
 		
 		// build visible rectangle
 		float inXmin = tmpMiddle.v[0] - dM;
@@ -1011,6 +1034,10 @@ public class LightBikeGame {
 			// save the max score
 			if (aPrefs != null) 
 				aPrefs.saveMaxPower(aPlayers[OWN_PLAYER].aPowerMax);
+			
+		    // increase the number of bikes
+			aNbPlayers1++;
+
 		}
 		else {
 			HUD.displayLose();

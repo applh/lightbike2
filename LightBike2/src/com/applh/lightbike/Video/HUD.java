@@ -230,24 +230,26 @@ public class HUD {
 				"HIGH SCORE:%d", 
 				maxPower
 				);
-		if (LightBikeGame.aCurrentBikes > 2) {
-			aTextBottomR = String.format(
-					"YOU +%d BIKES", 
-					LightBikeGame.aCurrentBikes-1 
-					);
-		}
-		else if (LightBikeGame.aCurrentBikes > 1) {
-			aTextBottomR = String.format(
-					"YOU +%d BIKE", 
-					LightBikeGame.aCurrentBikes-1 
-					);
-		}
-		else {
-			aTextBottomR="";
-		}
+		aTextBottomR="";
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
 		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
-		aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
+
+		if (!dispLoser || !dispWinner) {
+			if (LightBikeGame.aCurrentBikes > 2) {
+				aTextBottomR = String.format(
+					"vs %d BIKES", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+			}
+			else if (LightBikeGame.aCurrentBikes > 1) {
+				aTextBottomR = String.format(
+					"vs %d BIKE", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+			}
+			aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
+		}
+
 	}
 	
 	private void drawWinLose ()
