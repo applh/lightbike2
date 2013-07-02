@@ -112,7 +112,7 @@ public class UserPrefs {
 		}
 		
 		aMusic = prefs.getBoolean("musicOption", true);
-		aNumOfPlayers = Integer.valueOf(prefs.getString("playerNumber", "6"));
+		aNumOfPlayers = Integer.valueOf(prefs.getString("playerNumber", "10"));
 		gridIndex = Integer.valueOf(prefs.getString("arenaSize", "0"));
 		aGridSize = C_GRID_SIZES[gridIndex];
 		aPlayerColor = Integer.valueOf(prefs.getString("playerBike","2"));

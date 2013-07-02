@@ -21,6 +21,8 @@ public class Player {
 
 	public int aPower = 0;
 	public int aPowerMax = 0;
+	
+	
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
 	public boolean aIsCrash;
@@ -37,13 +39,14 @@ public class Player {
 	public final int MaxTracks = 100;
 	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
-	private int aDamageMin = 5;
-	private int aDamageRange = 20;
+	private int aDamageMin = 10;
+	private int aDamageRange = 40;
 	
 	private float aCrashRotationZ = 0;
 	
 	public int aTrailOffset;
 	public float aTrailHeight;
+	public int aMaxTrail = 5;
 	
 	private float aSpeedRef;
 	private int aSpeedKmh;	
@@ -172,7 +175,8 @@ public class Player {
 		tabTracks[aTrailOffset].vDirection.v[1] = 0.0f;
 		
 		aTrailHeight = TRAIL_HEIGHT;
-
+		aMaxTrail = 5;
+		
 		// RESET BOUNDING BOX
 		aBBminX = tabTracks[aTrailOffset].vStart.v[0];
 		aBBmaxX = aBBminX;
@@ -245,9 +249,13 @@ public class Player {
 		float y = getYpos();
 		
 		// FIXME
-		if (aTrailOffset >= tabTracks.length) {
+		if (aTrailOffset > (tabTracks.length-2)) {
 			restartTrack(curTime);
 		}
+		else if (aTrailOffset > aMaxTrail) {
+			restartTrack(curTime);			
+		}
+		
 		aTrailOffset++;
 		tabTracks[aTrailOffset] = new BikeTracks(this);
 		tabTracks[aTrailOffset].vStart.v[0] = x;
@@ -395,40 +403,7 @@ public class Player {
 
 		updateBBox(getXpos(), getYpos());
 	}
-/*	
-	public void drawCycleFast2 (long curr_time, long time_dt)
-	{
-		GLES11.glPushMatrix();
-		GLES11.glTranslatef(getXpos(), getYpos(), 0.0f);
 
-		doBikeRotation(curr_time);
-		//Lights.setupLights(gl, LightType.E_CYCLE_LIGHTS);
-
-		// IN
-		//GLES11.glFrontFace(GLES11.GL_CCW);
-		//GLES11.glShadeModel(GLES11.GL_SMOOTH);
-		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
-		GLES11.glEnable(GLES11.GL_LIGHTING);
-		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-		GLES11.glDepthMask(true);
-
-		GLES11.glEnable(GLES11.GL_NORMALIZE);
-		GLES11.glTranslatef(0.0f, 0.0f, LightBikeGame.GetBikeBBox(aPlayerID).v[2] / 2.0f);
-		//GLES11.glEnable(GLES11.GL_CULL_FACE);
-		//gl.glTranslatef((GridSize/2.0f), (GridSize/2.0f), 0.0f);
-		//gl.glTranslatef(_Player._PlayerXpos, _Player._PlayerYpos, 0.0f);
-		// LH HACK
-		LightBikeGame.GetBike(0).Draw(mPlayerColourSpecular, mPlayerColourDiffuse);
-
-		// OUT
-		//GLES11.glDisable(GLES11.GL_CULL_FACE);
-		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
-		GLES11.glDisable(GLES11.GL_LIGHTING);
-		//GLES11.glShadeModel(GLES11.GL_FLAT);
-
-		GLES11.glPopMatrix();		
-	}
-*/
 	public void doCrashTestWalls(Segment Walls[], long curTime)
 	{
 		Segment Current = tabTracks[aTrailOffset];
@@ -458,7 +433,7 @@ public class Player {
 		}
 		
 		for (int j=0; j < 4; j++) {
-			V = Current.Intersect(Walls[j]);
+			V = Current.Intersect2(Walls[j]);
 			
 			if (V != null) {
 				if (Current.t1 >= 0.0f && Current.t1 < 1.0f && Current.t2 >= 0.0f && Current.t2 < 1.0f) {
@@ -466,7 +441,7 @@ public class Player {
 					Current.vDirection.v[0] = V.v[0] - Current.vStart.v[0];
 					Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 					
-					doDamage(curTime, 0);
+					doDamage(curTime, 0, 0, 100);
 					if (aPower > 0) {
 						aSpeed = aSpeedRef;
 					}
@@ -603,7 +578,7 @@ public class Player {
 						
 						Wall = testPlayer.getTrail(k);
 						
-						V = Current.Intersect(Wall);
+						V = Current.Intersect2(Wall);
 						
 						if (V != null) {
 							if (Current.t1 >= 0.0f && Current.t1 < 1.0f && Current.t2 >= 0.0f && Current.t2 < 1.0f) {
@@ -612,7 +587,7 @@ public class Player {
 								Current.vDirection.v[1] = V.v[1] - Current.vStart.v[1];
 								
 								// RANDOM DAMAGE
-								doDamage(curTime, testPlayer.aTrailOffset/4);
+								doDamage(curTime, testPlayer.aTrailOffset/4, 0, 100);
 								
 								// kamikaze counts
 								testPlayer.restartTrack(curTime);
@@ -641,13 +616,17 @@ public class Player {
 		aCrashRotationTTL++;				
 	}
 	
-	public void doDamage (long curTime, int extra) {
+	public void doDamage (long curTime, int extra, int minD, int maxD) {
+		
 		// CREATE EXPLOSION
 		Explosion.Create(this);
-
+		
 		// RANDOM DAMAGE
-		Random rand = new Random();
-		int damage = aDamageMin + extra + rand.nextInt(aDamageRange);							
+		int damage = aDamageMin + extra + aRand.nextInt(aDamageRange);
+
+		if (damage < minD) damage = minD;
+		else if (damage > maxD) damage = maxD;
+		
 		aPower -= damage;
 
 		if (aPower <= 0)  {
@@ -666,59 +645,6 @@ public class Player {
 		}
 	}
 
-	/*	
-	public void drawActiveTracks (TrackRenderer render, Camera cam)
-	{
-		if (aTrailHeight > 0.0f) {
-			if (render != null) {
-				render.drawTracks(tabTracks, aTrailOffset, aTrailHeight, mPlayerColourDiffuse);
-			}
-		}
-	}	
-	public boolean isVisible (Camera cam)
-	{
-		Vector3 v1;
-		Vector3 v2;
-		Vector3 tmp = new Vector3(getXpos(),getYpos(),0.0f);
-		int lod_level = 2;
-		float d,s;
-		int i;
-		int LC_LOD = 3;
-		float fov = 120;
-		
-		boolean retValue;
-		
-		v1 = cam._target.sub(cam._cam);
-		v1.Normalise();
-		
-		v2 = cam._cam.sub(tmp);
-		
-		d = v2.Length();
-		
-		for (i=0; (i<LC_LOD) && (d >= LOD_DIST[lod_level][i]); i++);
-		
-		if (i >= LC_LOD) {
-			retValue = false;
-		}
-		else {
-			v2 = tmp.sub(cam._cam);
-			v2.Normalise();
-			
-			s = v1.Dot(v2);
-			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
-			
-			if (s < d - (LightBikeGame.GetBikeBBoxRadius(aPlayerID) * 2.0f)) {
-				retValue = false;
-			}
-			else {
-				retValue = true;
-			}
-			
-		}
-		
-		return retValue;
-	}
-*/	
 	private float getDirAngle (long time)
 	{
 		int last_dir;

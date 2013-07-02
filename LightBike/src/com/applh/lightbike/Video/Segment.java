@@ -79,7 +79,7 @@ public class Segment {
 		return t;
 	}
 	
-	private Vector3 IntersectParallel(Segment S2)
+	private Vector3 IntersectParallel2 (Segment S2)
 	{
 		Vector3 ReturnResult = new Vector3();
 		Vector3 V = new Vector3();
@@ -121,7 +121,7 @@ public class Segment {
 			return null;
 		}
 		
-		V = S2.vStart.add(S2.vDirection);
+		S2.vStart.addBuf(S2.vDirection, V);
 		
 		t = findT(this,V);
 		if(findT_Result) {
@@ -132,7 +132,7 @@ public class Segment {
 			return null;
 		}
 		
-		if(t < t1) {
+		if (t < t1) {
 			t1 = t;
 			t2 = 1.0f;
 			ReturnResult.copy(V);
@@ -195,14 +195,14 @@ public class Segment {
 		return ReturnResult;
 	}
 	
-	public Vector3 Intersect(Segment S2)
+	public Vector3 Intersect2 (Segment S2)
 	{
 		Vector3 ReturnResult; // = new Vec();
 		
-		if(Math.abs(vDirection.Dot(S2.vDirection.Orthogonal())) < 0.1) {
+		if (Math.abs(vDirection.Dot(S2.vDirection.Orthogonal())) < 0.1) {
 			// Vector lines are parallel
-			ReturnResult = IntersectParallel(S2);
-			if(ReturnResult == null) {
+			ReturnResult = IntersectParallel2(S2);
+			if (ReturnResult == null) {
 				t1 = 0.0f;
 				t2 = 0.0f;
 			}

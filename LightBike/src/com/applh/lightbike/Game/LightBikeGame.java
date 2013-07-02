@@ -23,7 +23,6 @@
 package com.applh.lightbike.Game;
 
 import android.opengl.GLES11;
-import android.util.FloatMath;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -37,6 +36,7 @@ import com.applh.lightbike.Game.Camera.CamType;
 import com.applh.lightbike.Video.*;
 import com.applh.lightbike.Video.Lighting.LightType;
 import com.applh.lightbike.fx.Explosion;
+import com.applh.lightbike.fx.PowerUp;
 import com.applh.lightbike.fx.SetupGL;
 import com.applh.lightbike.fx.TrackRenderer;
 import com.applh.lightbike.matrix.Vector3;
@@ -57,12 +57,15 @@ public class LightBikeGame {
 	
 	// Define arena setting 
 	private static float aGrideSize0 = 480.0f;
+	private static float aViewSize0 = 480.0f;
+	
 	private float aSpeed0 = 10.0f;
 	private static int aColor0 = 2;
 
 	public static final int MAX_PLAYERS = 24;
 	public static final int OWN_PLAYER = 0;
 	public static int aNbPlayers0 = 0;
+	public int aNbPlayers1 = 2;
 	public static int aCurrentBikes = 0;
 		
 	private WorldGraphics aWorld = null;
@@ -126,18 +129,16 @@ public class LightBikeGame {
 	public boolean aActBrake = false;
 	public boolean aActSpecial = false;
 
+	public int aPowerUpDamage0 = 10;
+	public int aPowerUpDamage = 10;
+	public int aPowerUpRatio = 2;
+	public Vector3 tmpMiddle = new Vector3();
 	
 	public float aMoveX=-1.0f;
 	public float aMoveY=-1.0f;
 	public float aMoveDX=0;
 	public float aMoveDY=0;
 	
-	public static final int LOD_DIST[][] = {
-		{1000, 1000, 1000 },
-		{100,  200,  400},
-		{30,   100,  200},
-		{10,   30,   150}
-	};
 
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
@@ -155,6 +156,7 @@ public class LightBikeGame {
 		aColor0 = 2;
 
 		aNbPlayers0 = 0;
+		aNbPlayers0 = 1;
 		aCurrentBikes = 0;
 		aTrackManager = null;
 		
@@ -213,8 +215,22 @@ public class LightBikeGame {
 		if (i < 1) res = aBikeModel0;
 		else res = aBikeModel1;		
 		
-		if (curFPS < 20) res = aBikeModel1;
-		else if (curFPS > 50) res = aBikeModel0;
+		// FIXME
+		if (avgFPS < 30) {
+			res = aBikeModel1;
+		}
+		else if (curFPS < 40) {
+			if (i < 1)
+				res = aBikeModel0;
+			else
+				res = aBikeModel1;				
+		}
+		else if (curFPS > 50) {
+			if (i < (curFPS/10))
+				res = aBikeModel0;
+			else
+				res = aBikeModel1;				
+		}
 		
 		return res;
 	}
@@ -224,13 +240,16 @@ public class LightBikeGame {
 
 		// Explosion
 		Explosion.ReInit0();
+		// PowerUp
+		PowerUp.ReInit0();
 		
 		// Load HUD
 	    HUD = new HUD(this, aContext);
 		HUD.displayInstr(true);
 
 		// DEFAULT VALUES
-		aNbPlayers0 = 6;
+		aNbPlayers0 = 10;
+		aNbPlayers1 = 2;
 		aGrideSize0 = 480.0f;
 		aSpeed0 = 10.0f;
 		aColor0 = 2;
@@ -307,13 +326,25 @@ public class LightBikeGame {
 	    // reload textures
 	    SetupGL.PrepareNewGame2();
 	    
-		// TO IMPROVE
+		// FIXME
 	    aNbPlayers0 = aPrefs.numberOfPlayers();
+		// users prefs set the limit of bikes
+		if (aNbPlayers0 < aNbPlayers1) aNbPlayers1 = aNbPlayers0;
+
+		aNbPlayers0 = aNbPlayers1;
+		
+		// some protection
+		if (aNbPlayers0 < 2) aNbPlayers0 = 2;
+		
 	    aCurrentBikes = aNbPlayers0;
 	    if (aPlayers == null) {
 	    	aPlayers = new Player[MAX_PLAYERS];
 	    }
-	    resetScores();
+
+	    // reset damage by powerup
+	    aPowerUpDamage =aPowerUpDamage0;
+
+		resetScores();
 
         // WORLD
 	    if (checkWorldRebuild()) {
@@ -341,6 +372,7 @@ public class LightBikeGame {
 	    	aTrackManager.reset();
 
 	    Explosion.NewGame();
+	    PowerUp.NewGame();
 	    
 		if (aVisual == null) {
 			aVisual = new Video(aScreenW, aScreenH);
@@ -566,6 +598,7 @@ public class LightBikeGame {
 			
 			// don't activate bots if game not started			
 			playAI();
+			playPowerUp();
 		}
 		
 		// RENDER FRAME
@@ -573,14 +606,40 @@ public class LightBikeGame {
 		
 	}
 
-	private void playAI () {
-		
-		if (aCurrentBikes < 3) {
-			// more agressivity at the end
-			//aComputerAI.SAVE_T_DIFF =  (2 - aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.SAVE_T_DIFF0;
-			//aComputerAI.HOPELESS_T =  (aCurrentBikes/(1.0f * aNbPlayers0)) * aComputerAI.HOPELESS_T0;
+	private void playPowerUp () {
+		Player userP = aPlayers[OWN_PLAYER];
+		// MANAGE POWERUP
+		PowerUp.ManageRules(aGrideSize0, userP, aPowerUpRatio);
+
+		int check = PowerUp.checkPlayer(userP);
+		if (check >0) {
+			Player curP = null;
+			for (int player = 0; player < aNbPlayers0; player++) {
+				curP=aPlayers[player];
+				if (player != OWN_PLAYER) {
+					curP.doDamage(aTimeNow, 0, aPowerUpDamage, aPowerUpDamage);
+					// FIXME
+					curP.aMaxTrail+=5;
+				}
+				else {
+					//curP.aPower+=aPowerUpDamage;
+					curP.doDamage(aTimeNow, 0, -aPowerUpDamage0, -aPowerUpDamage0);
+					// FIXME
+					curP.aMaxTrail+=5;
+				}
+			}
+			aPowerUpDamage+=aPowerUpDamage0;
+			SetupGL.IsPirateTTL=100;
 		}
-		
+		else {
+			// frame animation for Pirate floor
+			if (SetupGL.IsPirateTTL >0)
+				SetupGL.IsPirateTTL--;
+		}
+	}
+	
+	private void playAI () {
+				
 		// round robin AI to speed up frame time
 		Player bot = aPlayers[aiCount]; 
     	if ((bot != null) && !bot.isCrashed())	{
@@ -589,8 +648,7 @@ public class LightBikeGame {
        	aiCount++;
     	
     	if (aiCount > (aNbPlayers0 - 1))
-    		aiCount = 1;
-		
+    		aiCount = 1;		
 	}
 	
 	private void resetTime()
@@ -704,14 +762,12 @@ public class LightBikeGame {
 		{				
 			//check win lose should be in game logic not render - FIXME
 			if (p2 == OWN_PLAYER) {
-				//if (aPlayers[p2].getSpeed() == 0.0f) {
 				if (aPlayers[p2].isCrashed()) {
 					boOwnPlayerActive = false;						
 					aCurrentBikes--;
 				}
 			}
 			else {
-//				if (aPlayers[p2].getSpeed() > 0.0f) {						
 				if (! aPlayers[p2].isCrashed()) {
 					boOtherPlayersActive = true;
 				}
@@ -799,59 +855,45 @@ public class LightBikeGame {
 	
 	public boolean isVisible (Player player, Camera cam)
 	{
-		if (curFPS > 35) return true;		
+		float viewSize = .25f;
 		
-		Vector3 v1;
-		Vector3 v2;
-		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f);
-		int lod_level = 2;
+		// FIXME
+		if (curFPS > 60) viewSize = .4f;		
+		else if (curFPS > 50) viewSize = .325f;
+		else if (curFPS > 40) viewSize = .300f;
+		else if (curFPS > 30) viewSize = .275f;
+		else if (curFPS < 20) viewSize = .200f;
+		
+		boolean retValue = false;
 
-		if (curFPS > 35) lod_level=1;
+		// FIXME
+		//cam.aCam.middle(cam.aTarget, tmpMiddle);
+		tmpMiddle=cam.aTarget;
+		
+		// FIXME
+		float dM = viewSize * aViewSize0;
+		
+		// build visible rectangle
+		float inXmin = tmpMiddle.v[0] - dM;
+		float inYmin = tmpMiddle.v[1] - dM;
+		
+		float inXmax = tmpMiddle.v[0] + dM;
+		float inYmax = tmpMiddle.v[1] + dM;
 
-		float d,s;
-		int i;
-		int LC_LOD = 3;
-		float fov = 120;
+		float tmpX = player.getXpos();
+		float tmpY = player.getYpos();
 		
-		boolean retValue;
-		
-		v1 = cam._target.sub(cam._cam);
-		v1.Normalise();
-		
-		v2 = cam._cam.sub(tmp);
-		
-		d = v2.Length();
-		
-		for (i=0; (i<LC_LOD) && (d >= LOD_DIST[lod_level][i]); i++);
-		
-		if (i >= LC_LOD) {
-			retValue = false;
-		}
-		else {
-			v2 = tmp.sub(cam._cam);
-			v2.Normalise();
-			
-			s = v1.Dot(v2);
-			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
-			
-			if (s < d - (GetBikeBBoxRadius(player.aPlayerID) * 2.0f)) {
-				retValue = false;
-			}
-			else {
-				retValue = true;
-			}
-			
+		if ((tmpX > inXmin) && (tmpX < inXmax) && (tmpY > inYmin) && (tmpY < inYmax)) {
+			retValue= true;		
 		}
 		
 		return retValue;
-	}
-	
-
+	}	
 		
 	private void drawNextFrame () {
 
 		// START DRAWING NEW FRAME
-		if (curFPS > 20) 
+		if (curFPS > 25) 
 			aTrackRenderer.aAlphaMin=0.0f;
 		else
 			aTrackRenderer.aAlphaMin=1.0f;
@@ -861,6 +903,7 @@ public class LightBikeGame {
 		
 		drawNextFrameWorld();
 		Explosion.DrawFrame();
+		PowerUp.DrawFrame();
 
 		aTrackManager.drawFrameOldTracks(1.0f);
 
@@ -908,6 +951,7 @@ public class LightBikeGame {
 		}
 
 		aTrackManager.drawFrameOldTracks(0);
+		PowerUp.DrawFrame();
 		Explosion.DrawFrame();
 		
 	}
@@ -938,6 +982,10 @@ public class LightBikeGame {
 			// save the max score
 			if (aPrefs != null) 
 				aPrefs.saveMaxPower(aPlayers[OWN_PLAYER].aPowerMax);
+			
+		    // increase the number of bikes
+			aNbPlayers1++;
+
 		}
 		else {
 			HUD.displayLose();
@@ -1043,7 +1091,7 @@ public class LightBikeGame {
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 		GLES11.glEnable(GLES11.GL_LIGHTING);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-		GLES11.glDepthMask(true);
+		//GLES11.glDepthMask(true);
 
 		GLES11.glEnable(GLES11.GL_NORMALIZE);
 		GLES11.glTranslatef(0.0f, 0.0f, GetBikeBBox(player.aPlayerID).v[2] / 2.0f);

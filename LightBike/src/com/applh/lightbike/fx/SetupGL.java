@@ -35,6 +35,7 @@ public class SetupGL {
 	private static int aTexIdWall3;
 	private static int aTexIdWall4;
 	private static int aTexIdFloor;
+	private static int aTexIdFloorPirate;
 
 	private static int aGSetSkybox1;
 	private static int aGSetSkybox2;
@@ -53,9 +54,13 @@ public class SetupGL {
 	// Textures
 	private static GLTexture SplashTex = null;
 	private static GLTexture ExplodeTex = null;
+	private static GLTexture aPowerUpTex = null;
 //	private static GLTexture SkyBoxTex[] = null; 
 
 	private static int TexIdExplode = -1;
+	private static int TexIdPowerUp = -1;
+	
+	public static int IsPirateTTL = 0;
 	
 // static long aFreeMem = 0;
 	
@@ -94,20 +99,20 @@ public class SetupGL {
 //		aFreeMem = 0;
 		
 		aXenoFont = null;
-		
-//		aScreenW = screenW;
-//		aScreenH = screenH;
-		
+				
 		// reinit textures as context changed
 		SplashTex = null;
-//		SkyBoxTex = null; 
 
 		ExplodeTex = null;
 		TexIdExplode = -1;
 		
+		aPowerUpTex = null;
+		TexIdPowerUp = -1;
+		
 		// reset BB Manager
 		ByteBufferManager.Reinit();
 		
+		IsPirateTTL = 0;
 	}
 	
 	// STATIC INIT FOR GLES11
@@ -127,10 +132,7 @@ public class SetupGL {
 	public void myInitSurface () {
 		
 		// GENERAL SETUP
-		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
-
-		//GLES11.glDisable(GLES11.GL_BLEND);
 
 		GLES11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		GLES11.glClear(GLES11.GL_COLOR_BUFFER_BIT | GLES11.GL_DEPTH_BUFFER_BIT);
@@ -151,7 +153,6 @@ public class SetupGL {
 		
 		// GENERAL SETUP
 		GLES11.glShadeModel(GLES11.GL_SMOOTH);
-		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glBlendFunc(GLES11.GL_SRC_ALPHA, GLES11.GL_ONE_MINUS_SRC_ALPHA);
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
 
@@ -161,6 +162,7 @@ public class SetupGL {
 		// LOAD TEXTURES
 		PrepareNewGame2();
 		GetExplodeTex();
+		GetTexPowerUp();
 		
 	}
 
@@ -168,11 +170,13 @@ public class SetupGL {
 		PrepareTexWalls();
 		PrepareTexFloor();
 		PrepareTexSkybox();
+		IsPirateTTL=0;
 	}
 	
 	public static void PrepareTexFloor () {
 		aGSetFloor = aRand.nextInt(aGSet.aNbFloor);
 		aTexIdFloor = aGSet.getTexIdFloor(aGSetFloor);
+		aTexIdFloorPirate = aGSet.getTexIdFloorPirate(aGSetFloor);
 	}
 
 	public static void PrepareTexWalls () {
@@ -221,7 +225,7 @@ public class SetupGL {
 
 	public static GLTexture GetExplodeTex () {
 		if (ExplodeTex == null) {
-			ExplodeTex = new GLTexture(aContext, R.drawable.gltron_impact , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
+			ExplodeTex = new GLTexture(aContext, R.drawable.impact , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
 			TexIdExplode = ExplodeTex.getTextureID();
 		}
 		return ExplodeTex;
@@ -232,8 +236,24 @@ public class SetupGL {
 		return TexIdExplode;
 	}
 
+	public static GLTexture GetTexPowerUp () {
+		if (aPowerUpTex == null) {
+			aPowerUpTex = new GLTexture(aContext, R.drawable.up_1 , GLES11.GL_CLAMP_TO_EDGE, GLES11.GL_CLAMP_TO_EDGE, true);			
+			TexIdPowerUp = aPowerUpTex.getTextureID();
+		}
+		return aPowerUpTex;
+	}
+
+	public static int GetTexIdPowerUp (int index) {
+		GetTexPowerUp();
+		return TexIdPowerUp;
+	}
+
 	public static int GetTexIdFloor () {
-		return aTexIdFloor;
+		if (IsPirateTTL > 0)
+			return aTexIdFloorPirate;
+		else
+			return aTexIdFloor;			
 	}
 	
 	public static int GetTexIdWalls (int w) {

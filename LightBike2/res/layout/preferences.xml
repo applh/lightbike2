@@ -32,21 +32,21 @@
 		android:key="fourth_category">
 
    		<ListPreference    android:title="Number of Bikes"
-                   android:summary="Selects the number of Bikes"
+                   android:summary="Select the Maximum number of Bikes"
                    android:key="playerNumber"
-                   android:defaultValue="6"
+                   android:defaultValue="10"
                    android:entries="@array/playerNumEntries"
                    android:entryValues="@array/playerNumValues" />
 	        		
 		<ListPreference    android:title="Grid Size"
-		                   android:summary="Select the size of the arena (changes won't take effect until a new game is started)"
+		                   android:summary="Select the size of the arena"
 		                   android:key="arenaSize"
 		                   android:defaultValue="0"
 		                   android:entries="@array/arenaEntries"
 		                   android:entryValues="@array/arenaValues" />
 				
 		<ListPreference  android:title="Game Speed"
-		                 android:summary="Select the speed of the game (changes won't take effect until a new game is started)"
+		                 android:summary="Select the speed of the game"
 		                 android:key="gameSpeed"
 		                 android:defaultValue="1"
 		                 android:entries="@array/gameSpeedEntries"

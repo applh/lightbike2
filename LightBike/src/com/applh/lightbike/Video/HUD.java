@@ -108,6 +108,7 @@ public class HUD {
 	public void drawInfo ()
 	{
 		//GLES11.glDisable(GLES11.GL_DEPTH_TEST);
+		GLES11.glEnable(GLES11.GL_BLEND);
 		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		game.aVisual.rasonly();
 				
@@ -122,16 +123,17 @@ public class HUD {
 		drawConsole();
 
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 	}
 
 	
 	public void drawInfoHome ()
 	{
-		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
 		GLES11.glEnable(GLES11.GL_BLEND);
+		GLES11.glEnable(GLES11.GL_TEXTURE_2D);
+
 		game.aVisual.rasonly();
 				
-
 		// Draw fps
 		if(dispFPS)
 			drawFPS();
@@ -144,6 +146,7 @@ public class HUD {
 		drawCursor();
 		
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
+		GLES11.glDisable(GLES11.GL_BLEND);
 
 	}
 	
@@ -227,24 +230,26 @@ public class HUD {
 				"HIGH SCORE:%d", 
 				maxPower
 				);
-		if (LightBikeGame.aCurrentBikes > 2) {
-			aTextBottomR = String.format(
-					"YOU +%d BIKES", 
-					LightBikeGame.aCurrentBikes-1 
-					);
-		}
-		else if (LightBikeGame.aCurrentBikes > 1) {
-			aTextBottomR = String.format(
-					"YOU +%d BIKE", 
-					LightBikeGame.aCurrentBikes-1 
-					);
-		}
-		else {
-			aTextBottomR="";
-		}
+		aTextBottomR="";
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
 		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
-		aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
+
+		if (!dispLoser || !dispWinner) {
+			if (LightBikeGame.aCurrentBikes > 2) {
+				aTextBottomR = String.format(
+					"X %d BIKES", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+			}
+			else if (LightBikeGame.aCurrentBikes > 1) {
+				aTextBottomR = String.format(
+					"X %d BIKE", 
+					LightBikeGame.aCurrentBikes-1 
+					);
+			}
+			aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
+		}
+
 	}
 	
 	private void drawWinLose ()
