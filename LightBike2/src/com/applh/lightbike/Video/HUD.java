@@ -237,13 +237,13 @@ public class HUD {
 		if (!dispLoser || !dispWinner) {
 			if (LightBikeGame.aCurrentBikes > 2) {
 				aTextBottomR = String.format(
-					"vs %d BIKES", 
+					"X %d BIKES", 
 					LightBikeGame.aCurrentBikes-1 
 					);
 			}
 			else if (LightBikeGame.aCurrentBikes > 1) {
 				aTextBottomR = String.format(
-					"vs %d BIKE", 
+					"X %d BIKE", 
 					LightBikeGame.aCurrentBikes-1 
 					);
 			}

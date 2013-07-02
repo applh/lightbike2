@@ -18,6 +18,7 @@ public class GraphicSet {
 	public GLTexture aSkyboxTex[] = null;
 	public GLTexture aWallTex[] = null;
 	public GLTexture aFloorTex[] = null;
+	public GLTexture aFloorTexPirate = null;
 
 	public int aNbImgSkybox=6;
 	public int aNbImgWall=4;
@@ -58,7 +59,18 @@ public class GraphicSet {
 		return res;
 		
 	}
-	
+
+	public int getTexIdFloorPirate (int i) {
+		int res = 0;
+		if (i < aFloorTex.length) {
+			GLTexture resTex = loadTexFloorPirate(i);
+			if (resTex != null)
+				res = resTex.getTextureID();
+		}
+		return res;
+		
+	}
+
 	public int getTexIdWall (int i) {
 		int res = 0;
 		if (i < aWallTex.length) {
@@ -105,6 +117,34 @@ public class GraphicSet {
 			res = new GLTexture(aContext, resId);
 			if (resIndex < aFloorTex.length)
 				aFloorTex[resIndex] = res;
+		}
+		return res;	
+	}
+
+	public GLTexture loadTexFloorPirate (int resIndex) {
+		GLTexture res = null;
+
+		res = aFloorTexPirate;
+		
+		int resId = 0;
+		if (res == null) {
+			switch (resIndex) {
+			case 0:
+				resId = R.drawable.hd_floor_pirate;
+				break;
+			case 1:
+				resId = R.drawable.hd_floor_pirate;
+				break;
+			case 2:
+				resId = R.drawable.hd_floor_pirate;
+				break;
+			default:
+				resId = R.drawable.hd_floor_pirate;
+				break;				
+			}
+
+			res = new GLTexture(aContext, resId);
+			aFloorTexPirate = res;
 		}
 		return res;	
 	}

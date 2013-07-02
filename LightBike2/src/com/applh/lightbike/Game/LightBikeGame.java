@@ -23,7 +23,6 @@
 package com.applh.lightbike.Game;
 
 import android.opengl.GLES11;
-import android.util.FloatMath;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -140,12 +139,6 @@ public class LightBikeGame {
 	public float aMoveDX=0;
 	public float aMoveDY=0;
 	
-	public static final int LOD_DIST[][] = {
-		{1000, 1000, 1000 },
-		{100,  200,  400},
-		{30,   100,  200},
-		{10,   30,   150}
-	};
 
 	public LightBikeGame (OpenGLRenderer rgl, Context c)
 	{
@@ -255,7 +248,7 @@ public class LightBikeGame {
 		HUD.displayInstr(true);
 
 		// DEFAULT VALUES
-		aNbPlayers0 = 6;
+		aNbPlayers0 = 10;
 		aNbPlayers1 = 2;
 		aGrideSize0 = 480.0f;
 		aSpeed0 = 10.0f;
@@ -636,6 +629,12 @@ public class LightBikeGame {
 				}
 			}
 			aPowerUpDamage+=aPowerUpDamage0;
+			SetupGL.IsPirateTTL=100;
+		}
+		else {
+			// frame animation for Pirate floor
+			if (SetupGL.IsPirateTTL >0)
+				SetupGL.IsPirateTTL--;
 		}
 	}
 	
@@ -649,8 +648,7 @@ public class LightBikeGame {
        	aiCount++;
     	
     	if (aiCount > (aNbPlayers0 - 1))
-    		aiCount = 1;
-		
+    		aiCount = 1;		
 	}
 	
 	private void resetTime()
@@ -764,7 +762,6 @@ public class LightBikeGame {
 		{				
 			//check win lose should be in game logic not render - FIXME
 			if (p2 == OWN_PLAYER) {
-				//if (aPlayers[p2].getSpeed() == 0.0f) {
 				if (aPlayers[p2].isCrashed()) {
 					boOwnPlayerActive = false;						
 					aCurrentBikes--;
@@ -891,56 +888,7 @@ public class LightBikeGame {
 		}
 		
 		return retValue;
-	}
-	
-	public boolean isVisible_old (Player player, Camera cam)
-	{
-		if (curFPS > 60) return true;		
-		
-		Vector3 v1;
-		Vector3 v2;
-		Vector3 tmp = new Vector3(player.getXpos(), player.getYpos(), 0.0f); // bike position
-		int lod_level = 2;
-
-		if (curFPS > 40) lod_level=1;
-
-		float d,s;
-		int i;
-		int LC_LOD = 3;
-		float fov = 120;
-		
-		boolean retValue;
-		
-		v1 = cam.aTarget.sub(cam.aCam); // camera direction vector
-		v1.Normalise();
-		
-		v2 = cam.aCam.sub(tmp);
-		
-		d = v2.Length();
-		
-		for (i=0; (i<LC_LOD) && (d >= LOD_DIST[lod_level][i]); i++);
-		
-		if (i >= LC_LOD) {
-			retValue = false;
-		}
-		else {
-			v2 = tmp.sub(cam.aCam);
-			v2.Normalise();
-			
-			s = v1.Dot(v2);
-			d = FloatMath.cos((float) (fov * Math.PI / 360.0f));
-			
-			if (s < d - (GetBikeBBoxRadius(player.aPlayerID) * 2.0f)) {
-				retValue = false;
-			}
-			else {
-				retValue = true;
-			}
-			
-		}
-		
-		return retValue;
-	}
+	}	
 		
 	private void drawNextFrame () {
 

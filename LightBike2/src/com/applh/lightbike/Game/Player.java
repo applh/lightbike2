@@ -36,7 +36,7 @@ public class Player {
 	private int Score;
 	
 	private TrackManager aTrackManager;
-	public final int MaxTracks = 150;
+	public final int MaxTracks = 100;
 	public BikeTracks[] tabTracks = new BikeTracks[MaxTracks] ;
 	
 	private int aDamageMin = 10;

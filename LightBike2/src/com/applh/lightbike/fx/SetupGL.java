@@ -35,6 +35,7 @@ public class SetupGL {
 	private static int aTexIdWall3;
 	private static int aTexIdWall4;
 	private static int aTexIdFloor;
+	private static int aTexIdFloorPirate;
 
 	private static int aGSetSkybox1;
 	private static int aGSetSkybox2;
@@ -58,6 +59,8 @@ public class SetupGL {
 
 	private static int TexIdExplode = -1;
 	private static int TexIdPowerUp = -1;
+	
+	public static int IsPirateTTL = 0;
 	
 // static long aFreeMem = 0;
 	
@@ -109,6 +112,7 @@ public class SetupGL {
 		// reset BB Manager
 		ByteBufferManager.Reinit();
 		
+		IsPirateTTL = 0;
 	}
 	
 	// STATIC INIT FOR GLES11
@@ -166,11 +170,13 @@ public class SetupGL {
 		PrepareTexWalls();
 		PrepareTexFloor();
 		PrepareTexSkybox();
+		IsPirateTTL=0;
 	}
 	
 	public static void PrepareTexFloor () {
 		aGSetFloor = aRand.nextInt(aGSet.aNbFloor);
 		aTexIdFloor = aGSet.getTexIdFloor(aGSetFloor);
+		aTexIdFloorPirate = aGSet.getTexIdFloorPirate(aGSetFloor);
 	}
 
 	public static void PrepareTexWalls () {
@@ -244,7 +250,10 @@ public class SetupGL {
 	}
 
 	public static int GetTexIdFloor () {
-		return aTexIdFloor;
+		if (IsPirateTTL > 0)
+			return aTexIdFloorPirate;
+		else
+			return aTexIdFloor;			
 	}
 	
 	public static int GetTexIdWalls (int w) {
