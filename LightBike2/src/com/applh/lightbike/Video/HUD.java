@@ -237,14 +237,16 @@ public class HUD {
 		if (!dispLoser || !dispWinner) {
 			if (LightBikeGame.aCurrentBikes > 2) {
 				aTextBottomR = String.format(
-					"X %d BIKES", 
-					LightBikeGame.aCurrentBikes-1 
+						"X %d/%d BIKES", 
+						LightBikeGame.aCurrentBikes-1,
+						game.aNbPlayers1-1
 					);
 			}
 			else if (LightBikeGame.aCurrentBikes > 1) {
 				aTextBottomR = String.format(
-					"X %d BIKE", 
-					LightBikeGame.aCurrentBikes-1 
+						"X %d/%d BIKE", 
+						LightBikeGame.aCurrentBikes-1,
+						game.aNbPlayers1-1
 					);
 			}
 			aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);

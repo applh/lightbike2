@@ -65,7 +65,7 @@ public class LightBikeGame {
 	public static final int MAX_PLAYERS = 24;
 	public static final int OWN_PLAYER = 0;
 	public static int aNbPlayers0 = 0;
-	public int aNbPlayers1 = 2;
+	public int aNbPlayers1 = 3;
 	public static int aCurrentBikes = 0;
 		
 	private WorldGraphics aWorld = null;
@@ -156,7 +156,7 @@ public class LightBikeGame {
 		aColor0 = 2;
 
 		aNbPlayers0 = 0;
-		aNbPlayers0 = 1;
+		aNbPlayers1 = 3;
 		aCurrentBikes = 0;
 		aTrackManager = null;
 		
@@ -235,7 +235,7 @@ public class LightBikeGame {
 		return res;
 	}
 	
-	public boolean initGame2 () {
+	public boolean initGame () {
 		boolean res = true;
 
 		// Explosion
@@ -249,7 +249,7 @@ public class LightBikeGame {
 
 		// DEFAULT VALUES
 		aNbPlayers0 = 10;
-		aNbPlayers1 = 2;
+		aNbPlayers1 = 3;
 		aGrideSize0 = 480.0f;
 		aSpeed0 = 10.0f;
 		aColor0 = 2;
@@ -326,17 +326,25 @@ public class LightBikeGame {
 	    // reload textures
 	    SetupGL.PrepareNewGame2();
 	    
-		// FIXME
-	    aNbPlayers0 = aPrefs.numberOfPlayers();
-		// users prefs set the limit of bikes
-		if (aNbPlayers0 < aNbPlayers1) aNbPlayers1 = aNbPlayers0;
+	    if (aPrefs != null) {
+			// FIXME
+		    aNbPlayers0 = aPrefs.numberOfPlayers();
+		    
+		    // get the last saved level
+		    if (aNbPlayers1 < aPrefs.aBikesMax) {
+		    	aNbPlayers1 = aPrefs.aBikesMax;
+		    }
+		    
+			// users prefs set the limit of bikes
+			if (aNbPlayers0 < aNbPlayers1) aNbPlayers1 = aNbPlayers0;
+	
+			aNbPlayers0 = aNbPlayers1;		
+	    }
 
-		aNbPlayers0 = aNbPlayers1;
-		
-		// some protection
+	    // some protection
 		if (aNbPlayers0 < 2) aNbPlayers0 = 2;
-		
-	    aCurrentBikes = aNbPlayers0;
+
+		aCurrentBikes = aNbPlayers0;
 	    if (aPlayers == null) {
 	    	aPlayers = new Player[MAX_PLAYERS];
 	    }
@@ -985,6 +993,11 @@ public class LightBikeGame {
 			
 		    // increase the number of bikes
 			aNbPlayers1++;
+
+			// save the max bikes
+			if (aPrefs != null) 
+				aPrefs.saveMaxBikes(aNbPlayers1);
+			
 
 		}
 		else {

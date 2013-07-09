@@ -62,6 +62,7 @@ public class UserPrefs {
 	private int aPlayerColor;
 	
 	public int aPowerMax=0;
+	public int aBikesMax=0;
 	
 	public UserPrefs (Context ctx)
 	{
@@ -79,6 +80,7 @@ public class UserPrefs {
 		cameraType = Integer.valueOf(prefs.getString("cameraPref", C_DEFAULT_CAM_TYPE));
 
 		aPowerMax = Integer.valueOf(prefs.getString("powerMax", "200"));
+		aBikesMax = Integer.valueOf(prefs.getString("bikesMax", "3"));
 		
 		switch(cameraType)
 		{
@@ -132,7 +134,17 @@ public class UserPrefs {
 			editor.commit();
 		}
 	}
-	
+
+	public void saveMaxBikes (int bikes) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(aContext);
+		aBikesMax = Integer.valueOf(prefs.getString("bikesMax", "3"));
+		if (aBikesMax < bikes) {
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString("bikesMax", ""+bikes);
+			editor.commit();
+		}
+	}
+
 	public Camera.CamType CameraType()
 	{
 		

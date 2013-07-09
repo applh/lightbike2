@@ -36,7 +36,7 @@ public class LightBike extends Activity {
     /** Called when the activity is first created. */
 	private OpenGLView aView = null;
 	public static int aResPref = -1;
-	public static String aGameVersion = "v5.0";
+	public static String aGameVersion = "v5.1";
 		
     @Override
     public void onCreate (Bundle savedInstanceState) {
