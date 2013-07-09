@@ -67,6 +67,8 @@ public class LightBikeGame {
 	public static int aNbPlayers0 = 0;
 	public int aNbPlayers1 = 3;
 	public static int aCurrentBikes = 0;
+
+	public int aGameCount = 0;
 		
 	private WorldGraphics aWorld = null;
 	private int aScreenH = 0;
@@ -329,12 +331,19 @@ public class LightBikeGame {
 	    if (aPrefs != null) {
 			// FIXME
 		    aNbPlayers0 = aPrefs.numberOfPlayers();
-		    
-		    // get the last saved level
-		    if (aNbPlayers1 < aPrefs.aBikesMax) {
-		    	aNbPlayers1 = aPrefs.aBikesMax;
+
+		    // only for the first game
+		    // reload the saved data
+		    if (aGameCount < 1) {
+			    // get the last saved level
+			    if (aNbPlayers1 < aPrefs.aBikesMax) {
+			    	aNbPlayers1 = aPrefs.aBikesMax;
+			    }
+			    // limit to 6 bikes at start
+			    if (aNbPlayers1 > 6) {
+			    	aNbPlayers1 = 6;
+			    }
 		    }
-		    
 			// users prefs set the limit of bikes
 			if (aNbPlayers0 < aNbPlayers1) aNbPlayers1 = aNbPlayers0;
 	
@@ -995,14 +1004,16 @@ public class LightBikeGame {
 			aNbPlayers1++;
 
 			// save the max bikes
-			if (aPrefs != null) 
+			if (aPrefs != null) {
 				aPrefs.saveMaxBikes(aNbPlayers1);
-			
+			}
 
 		}
 		else {
 			HUD.displayLose();
 		}
+		// count one more game
+		aGameCount++;
 	}
 
 	public long getScore (int player) {
