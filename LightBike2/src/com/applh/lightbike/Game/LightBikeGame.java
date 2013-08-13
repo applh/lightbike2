@@ -994,7 +994,7 @@ public class LightBikeGame {
 			// increase power from game to game
 			aPowerBonus = 100 + aPlayers[OWN_PLAYER].aPower;
 
-			HUD.displayWin();
+			HUD.displayYouWin();
 			
 			// save the max score
 			if (aPrefs != null) 
@@ -1010,7 +1010,7 @@ public class LightBikeGame {
 
 		}
 		else {
-			HUD.displayLose();
+			HUD.displayCrash();
 		}
 		// count one more game
 		aGameCount++;
