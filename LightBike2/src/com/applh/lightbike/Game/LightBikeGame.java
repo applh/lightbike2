@@ -1,5 +1,4 @@
 /*
- * Copyright © 2012 Iain Churcher
  *
  * Based on GLtron by Andreas Umbach (www.gltron.org)
  *
@@ -587,7 +586,7 @@ public class LightBikeGame {
 					userP.aPower-=1;
 					userP.aSpeed*=1.2;
 				}
-				aActBoost=false;
+				aActBoost = false;
 			}
 			else if (aActBrake) {
 				if ((userP != null) && (userP.aPower >1)) {
@@ -596,14 +595,14 @@ public class LightBikeGame {
 						userP.aSpeed*=.9;
 					}
 				}
-				aActBrake=false;
+				aActBrake = false;
 			}
 			else if (aActSpecial) {
 				if ((userP != null) && (userP.aPower >0)) {
 					// MAX Power Bonus
 					userP.doSpecial(aPowerBonus0, aTimeNow);
 				}
-				aActSpecial=false;
+				aActSpecial = false;
 			}
 			
 			if (userP != null) {

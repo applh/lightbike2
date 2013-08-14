@@ -46,7 +46,8 @@ public class HUD {
 
 	private int aMidX;
 	
-	private String aTextBottomL;
+	private String aTextBottomL0;
+	private String aTextBottomL1;
 	private String aTextBottomR;
 
 	private int aPowerX0;
@@ -239,14 +240,21 @@ public class HUD {
 	private void drawBottom ()
 	{
 		long maxPower = game.getMaxPower(LightBikeGame.OWN_PLAYER);
+		long curHacking = game.aPowerUpDamage;
 
-		aTextBottomL = String.format(
+		aTextBottomL0 = String.format(
+				"HACKING:%d%%", 
+				curHacking
+				);
+		aTextBottomL1 = String.format(
 				"HIGH SCORE:%d", 
 				maxPower
 				);
 		aTextBottomR="";
+		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
-		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
+		aXenoFont.drawText(16, 8,         aFont1, aTextBottomL1);
+		aXenoFont.drawText(16, 16+aFont1, aFont1, aTextBottomL0);
 
 		if (!aDispLoser || !aDispWinner) {
 			if (LightBikeGame.aCurrentBikes > 2) {
