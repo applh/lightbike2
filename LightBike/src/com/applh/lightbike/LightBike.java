@@ -36,7 +36,7 @@ public class LightBike extends Activity {
     /** Called when the activity is first created. */
 	private OpenGLView aView = null;
 	public static int aResPref = -1;
-	public static String aGameVersion = "v5.0";
+	public static String aGameVersion = "v5.2";
 		
     @Override
     public void onCreate (Bundle savedInstanceState) {
@@ -109,7 +109,7 @@ public class LightBike extends Activity {
      	if (aView != null) {
 	        if (keyCode == KeyEvent.KEYCODE_MENU) {
 	        	// OPEN THE SETTINGS MENU
-	        	startPreferences();
+	        	//startPreferences();
 	        }
      	}        
         return super.onKeyUp(keyCode, event);

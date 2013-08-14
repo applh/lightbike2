@@ -57,8 +57,9 @@ public class HUD {
 	
 	
 	// win lose
-	private boolean dispWinner = false;
-	private boolean dispLoser = false;
+	private boolean aDispWinner = false;
+	private boolean aDispLoser = false;
+	
 	private boolean dispInst = true;
 	private boolean dispFPS = true;
 	
@@ -116,9 +117,12 @@ public class HUD {
 		if(dispFPS)
 			drawFPS();
 		drawBottom();
-		drawCommands();
+		
+		if (aDispWinner || aDispLoser)
+			drawWinLose();
+		else
+			drawCommands();
 
-		drawWinLose();
 		drawPower();
 		drawConsole();
 
@@ -157,8 +161,8 @@ public class HUD {
 	    	consoleBuffer[i] = null;
 	    }
 	    
-	    dispWinner = false;
-	    dispLoser = false;
+	    aDispWinner = false;
+	    aDispLoser = false;
 
 	    // FIXME
 	    aPower2display = aPower2ref;
@@ -167,23 +171,26 @@ public class HUD {
 		aMidX = game.aVisual._iwidth/2;
 	}
 
-	public void displayWin()
+	public void displayYouWin()
 	{
-		if (dispLoser != true)
-			dispWinner = true;
+		if (aDispLoser != true) {
+			aDispWinner = true;
+		    aDispLoser = false;
+		}
 	}
 	
-	public void displayLose()
+	public void displayCrash()
 	{
-		if (dispWinner != true)
-			dispLoser = true;
+		if (aDispWinner != true) {
+			aDispLoser = true;
+			aDispWinner = false;
+		}
 	}
 	
 	public void displayInstr(Boolean value)
 	{
 		dispInst = value;
 
-		// LH debug
 		if (dispInst) {
 			addLineToConsole("");
 			addLineToConsole("LIGHT BIKE");
@@ -201,16 +208,23 @@ public class HUD {
 
 	public void drawCommands () 
 	{
+		GLES11.glColor4f(0.8f, 0.8f, 0.8f, 0.5f);
+		aXenoFont.drawText(
+				5,
+				game.aVisual._vp_h / 2,
+				(game.aVisual._vp_w / (6 / 4 * 14)),
+				"[+]        [+]");
+
 		int x8 = aMidX / 5;
 		int ts = aFont0 * 3 / 2;
 		int ts2 = 2*ts;
 		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 0.8f);
-		aXenoFont.drawText(1*x8 -ts, ts2, aFont0, "==\\");
-		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "(-)");	
+		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "-M-");	
 		aXenoFont.drawText(5*x8 -ts, ts2, aFont0, "(0)");	
-		aXenoFont.drawText(7*x8 -ts, ts2, aFont0, "(+)");	
-		aXenoFont.drawText(9*x8 -ts, ts2, aFont0, "/==");	
+		aXenoFont.drawText(7*x8 -ts, ts2, aFont0, "+M+");	
+		
+	
 	}
 
 	public void drawCursor () 
@@ -234,17 +248,19 @@ public class HUD {
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 1.0f);
 		aXenoFont.drawText(16, 8, aFont1, aTextBottomL);
 
-		if (!dispLoser || !dispWinner) {
+		if (!aDispLoser || !aDispWinner) {
 			if (LightBikeGame.aCurrentBikes > 2) {
 				aTextBottomR = String.format(
-					"X %d BIKES", 
-					LightBikeGame.aCurrentBikes-1 
+						"X %d/%d BIKES", 
+						LightBikeGame.aCurrentBikes-1,
+						game.aNbPlayers1-1
 					);
 			}
 			else if (LightBikeGame.aCurrentBikes > 1) {
 				aTextBottomR = String.format(
-					"X %d BIKE", 
-					LightBikeGame.aCurrentBikes-1 
+						"X %d/%d BIKE", 
+						LightBikeGame.aCurrentBikes-1,
+						game.aNbPlayers1-1
 					);
 			}
 			aXenoFont.drawText(aMidX, 8, aFont1, aTextBottomR);
@@ -256,17 +272,16 @@ public class HUD {
 	{
 		String str = null;
 		
-		if(dispWinner) {
+		if (aDispWinner) {
 			str = "[+]  YOU WIN  [+]";
 			GLES11.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 		}
-		else if(dispLoser) {
+		else if (aDispLoser) {
 			str = "[X]  CRASH  [X]";
 			GLES11.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		}
 		
-		if(str != null)
-		{
+		if (str != null) {
 			aXenoFont.drawText(
 					5, 
 					game.aVisual._vp_h / 2, 
@@ -409,11 +424,11 @@ public class HUD {
 		long freeMem = game.getGcMemory();
 
 		String textFPS = String.format(
-				"TIME:%d FPS:%d/%d/%d/ RAM:%d", 
-				playTime, 
+				"FPS:%d/%d/%d/ TIME:%d RAM:%d", 
 				fpsPlay, 
 				fpsAvgPlay, 
 				fpsMaxPlay,
+				playTime, 
 				freeMem
 				);
 		

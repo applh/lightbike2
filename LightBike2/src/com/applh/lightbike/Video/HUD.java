@@ -191,7 +191,6 @@ public class HUD {
 	{
 		dispInst = value;
 
-		// LH debug
 		if (dispInst) {
 			addLineToConsole("");
 			addLineToConsole("LIGHT BIKE");
@@ -221,9 +220,9 @@ public class HUD {
 		int ts2 = 2*ts;
 		
 		GLES11.glColor4f(1.0f, 1.0f, 0.2f, 0.8f);
-		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "-W-");	
+		aXenoFont.drawText(3*x8 -ts, ts2, aFont0, "-M-");	
 		aXenoFont.drawText(5*x8 -ts, ts2, aFont0, "(0)");	
-		aXenoFont.drawText(7*x8 -ts, ts2, aFont0, "+W+");	
+		aXenoFont.drawText(7*x8 -ts, ts2, aFont0, "+M+");	
 		
 	
 	}
@@ -425,11 +424,11 @@ public class HUD {
 		long freeMem = game.getGcMemory();
 
 		String textFPS = String.format(
-				"TIME:%d FPS:%d/%d/%d/ RAM:%d", 
-				playTime, 
+				"FPS:%d/%d/%d/ TIME:%d RAM:%d", 
 				fpsPlay, 
 				fpsAvgPlay, 
 				fpsMaxPlay,
+				playTime, 
 				freeMem
 				);
 		

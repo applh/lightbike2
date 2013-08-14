@@ -157,7 +157,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 		else if (aDoneSplash) {
 		    // setup the Game
 		    aSetupGL.myInitGame();
-			aIsGameInit = aGame.initGame2();
+			aIsGameInit = aGame.initGame();
 		}
 		else if (aIsGLInit) {			
 			// splashscreen
