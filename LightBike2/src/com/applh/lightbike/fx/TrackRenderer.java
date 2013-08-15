@@ -39,7 +39,7 @@ public class TrackRenderer {
 	}
 
 	
-	public void drawTracks (Segment segs[], int trail_offset, float trail_height, float[] color)
+	public void drawTracks (Segment segs[], int trail_offset, float trackHeight, float[] color)
 	{		
 		int segOffset;
 
@@ -52,7 +52,7 @@ public class TrackRenderer {
 		GLES11.glDisable(GLES11.GL_TEXTURE_2D);
 		GLES11.glDisable(GLES11.GL_CULL_FACE);
 		GLES11.glEnableClientState(GLES11.GL_VERTEX_ARRAY);
-		float curH = trail_height;
+		float curH = trackHeight;
 		//float stepH = 0.1f;
 		float nextH = curH;
 		for (segOffset = 0; segOffset <= trail_offset; segOffset++) {
@@ -69,9 +69,10 @@ public class TrackRenderer {
 			GLES11.glColor4f(red, green, blue, alpha);
 
 			// last segment
-			if (segOffset == trail_offset)
-				nextH = 0.5f * (trail_height + nextH);
-
+			if (segOffset == trail_offset) {
+				nextH = 0.5f * (trackHeight + nextH);
+			}
+			
 			float tempVertexSquare[] = {
 				segs[segOffset].vStart.v[0], 
 				segs[segOffset].vStart.v[1], 
@@ -92,7 +93,7 @@ public class TrackRenderer {
 			};
 			// raise the wall :P
 			curH = nextH;
-			nextH = trail_height + FloatMath.sqrt(0.25f*segOffset);
+			nextH = trackHeight + FloatMath.sqrt(0.25f*segOffset);
 
 			if (aFb == null) {
 				aFb = ByteBufferManager.CreateFloatBuffer(tempVertexSquare);

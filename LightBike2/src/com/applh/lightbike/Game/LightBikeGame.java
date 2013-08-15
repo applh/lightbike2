@@ -860,15 +860,46 @@ public class LightBikeGame {
 		// LH HACK
 		// draw each bike and trail
 		for (int player = 0; player < aNbPlayers0; player++) {
+			Player curP = aPlayers[player];
+			
+			if (player == OWN_PLAYER) {
+				if (curP.aZ < 0.1f) {
+					curP.aZdelta = +0.1f;
+				}
+				else if (curP.aZ > 4.0f) {
+					curP.aZdelta = -0.1f;
+				}
+			}
+
+			if (player == OWN_PLAYER || isVisible(curP, aCam)) {
+				// DRAW BIKE
+				// SMALL LEAKS
+				drawCycleOne(curP, aTimeNow, aFrameDT);
+			}
+			
+			// landing/take off
+			curP.aZ += curP.aZdelta;
+		}
+	}
+/*
+	private void drawNextFrameHomeSave () {
+
+		// camera follow player bike
+		aCam.moveCameraHome(aPlayers[OWN_PLAYER], aTimeNow, aFrameDT);
+
+		drawNextFrameWorld();
+		
+		// LH HACK
+		// draw each bike and trail
+		for (int player = 0; player < aNbPlayers0; player++) {
 			if (player == OWN_PLAYER || isVisible(aPlayers[player], aCam)) {
 				// DRAW BIKE
 				// SMALL LEAKS
-				drawCycleFast(aPlayers[player], aTimeNow, aFrameDT);
+				drawCycleOne(aPlayers[player], aTimeNow, aFrameDT);
 			}
 		}
 	}
-
-	
+	*/
 	public boolean isVisible (Player player, Camera cam)
 	{
 		float viewSize = .25f;
@@ -926,21 +957,37 @@ public class LightBikeGame {
 		// draw each bike and trail
 		for (int player = 0; player < aNbPlayers0; player++) {
 			Player curP = aPlayers[player];
+			
 			//if (player == OWN_PLAYER || aPlayers[player].isVisible(aCam)) {
 			if (!curP.isCrashed() && isVisible(curP, aCam)) {
+				
+				// gravity
+				if (curP.aZ < 0.1f) {
+					curP.aZdelta = 0.0f;
+					curP.aZ = 0.0f;
+				}
+				else if (curP.aZdelta > 0){
+					curP.aZdelta = -curP.aZdelta;
+				}
+				// manage altitude
+				curP.aZ += curP.aZdelta;
+				
 				// DRAW BIKE	
-				drawCycleFast(curP, aTimeNow, aFrameDT);
+				drawCycleOne(curP, aTimeNow, aFrameDT);
+				
 			}
 			drawActiveTracks(curP, aTrackRenderer, aCam);
 		}
 
 	}
-
+	
 	public void drawActiveTracks (Player player, TrackRenderer render, Camera cam)
 	{
 		if (player.aTrailHeight > 0.0f) {
 			if (render != null) {
-				render.drawTracks(player.tabTracks, player.aTrailOffset, player.aTrailHeight, player.mPlayerColourDiffuse);
+				float curH = player.aTrailHeight + player.aZ;
+				
+				render.drawTracks(player.tabTracks, player.aTrailOffset, curH, player.mPlayerColourDiffuse);
 			}
 		}
 	}	
@@ -959,7 +1006,7 @@ public class LightBikeGame {
 			Player curP = aPlayers[player];
 			if (curP.getTrailHeight() > 0) {
 				// DRAW BIKE	
-				drawCycleFast(curP, aTimeNow, aFrameDT);
+				drawCycleOne(curP, aTimeNow, aFrameDT);
 			}
 			// DRAW TRAIL
 			aTrackRenderer.aAlphaMin=.8f;
@@ -1100,10 +1147,12 @@ public class LightBikeGame {
 		return GetBike(i).GetBBoxRadius();
 	}
 	
-	public void drawCycleFast (Player player, long curr_time, long time_dt)
+	public void drawCycleOne (Player player, long curr_time, long time_dt)
 	{
 		GLES11.glPushMatrix();
-		GLES11.glTranslatef(player.getXpos(), player.getYpos(), 0.0f);
+		
+		// move the brush to the bike coordinates
+		GLES11.glTranslatef(player.getXpos(), player.getYpos(), player.aZ);
 
 		player.doBikeRotation(curr_time);
 		//Lights.setupLights(gl, LightType.E_CYCLE_LIGHTS);
@@ -1116,13 +1165,14 @@ public class LightBikeGame {
 		GLES11.glEnable(GLES11.GL_DEPTH_TEST);
 		//GLES11.glDepthMask(true);
 
-		GLES11.glEnable(GLES11.GL_NORMALIZE);
+		GLES11.glEnable(GLES11.GL_NORMALIZE);		
 		GLES11.glTranslatef(0.0f, 0.0f, GetBikeBBox(player.aPlayerID).v[2] / 2.0f);
+		
 		//GLES11.glEnable(GLES11.GL_CULL_FACE);
 		//gl.glTranslatef((GridSize/2.0f), (GridSize/2.0f), 0.0f);
 		//gl.glTranslatef(_Player._PlayerXpos, _Player._PlayerYpos, 0.0f);
 		// LH HACK
-		GetBike(player.aPlayerID).Draw(player.mPlayerColourSpecular, player.mPlayerColourDiffuse);
+		GetBike(player.aPlayerID).DrawBike(player.mPlayerColourSpecular, player.mPlayerColourDiffuse);
 
 		// OUT
 		//GLES11.glDisable(GLES11.GL_CULL_FACE);

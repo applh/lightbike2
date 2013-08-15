@@ -22,6 +22,8 @@ public class Player {
 	public int aPower = 0;
 	public int aPowerMax = 0;
 	
+	public float aZ = 0.0f;
+	public float aZdelta = 0.0f;
 	
 	public float aSpeed;
 	public int aCrashRotationTTL = 0;
@@ -641,7 +643,10 @@ public class Player {
 			// RESET SPEED
 			aSpeed = aSpeedRef;
 			// animate
-			aCrashRotationTTL++;			
+			aCrashRotationTTL++;
+			
+			aZ = .2f * damage;
+			aZdelta = -0.1f * Math.round(aZ/5);
 		}
 	}
 

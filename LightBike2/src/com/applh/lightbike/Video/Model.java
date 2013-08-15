@@ -49,7 +49,7 @@ public class Model {
 	private float rawVertex[];
 	private FloatBuffer mVertexBuffer;
 	private FloatBuffer mNormalBuffer;
-	private ShortBuffer mIndicesBuffer[];
+	private ShortBuffer aIndicesBuffer[];
 	private int mNumOfVertices;
 	private Vector3 mBBoxMin;
 	private Vector3 mBBoxSize;
@@ -245,7 +245,7 @@ public class Model {
 		mNormalBuffer.position(0);
 		
 		// Create the indices (per Material)
-		mIndicesBuffer = new ShortBuffer[numOfMaterials];
+		aIndicesBuffer = new ShortBuffer[numOfMaterials];
 		int tempface[] = new int[numOfMaterials];
 
 		ArrayList<short[]> Indices = new ArrayList<short[]>();
@@ -254,7 +254,7 @@ public class Model {
 		for (int i=0;i<numOfMaterials;i++) {
 			ByteBuffer ibb = ByteBuffer.allocateDirect(2 * 3 * MaterialsCount[i]);
 			ibb.order(ByteOrder.nativeOrder());
-			mIndicesBuffer[i] = ibb.asShortBuffer();
+			aIndicesBuffer[i] = ibb.asShortBuffer();
 			tempface[i] = 0;
 			Indices.add(new short[MaterialsCount[i] * 3]);
 		}
@@ -270,10 +270,10 @@ public class Model {
 			tempface[materialtemp] += 1;
 		}
 		
-		for(int i=0;i<numOfMaterials;i++) {
+		for (int i=0;i<numOfMaterials;i++) {
 			tempIndices = (short[])Indices.get(i);
-			mIndicesBuffer[i].put(tempIndices);
-			mIndicesBuffer[i].position(0);
+			aIndicesBuffer[i].put(tempIndices);
+			aIndicesBuffer[i].position(0);
 		}
 		
 		float[] HullColour = {0.0f, 0.1f, 0.9f, 1.0f};
@@ -285,7 +285,7 @@ public class Model {
 		
 	}
 
-	public void Draw (float ambient_color[], float diffuse_color[])
+	public void DrawBike (float ambient_color[], float diffuse_color[])
 	{
 		int MaterialCount = mMaterials.GetNumber();
 		
@@ -298,14 +298,14 @@ public class Model {
 		mMaterials.SetMaterialColour("Hull", ColourType.E_DIFFUSE, diffuse_color);
 		
 		for (int i=0; i<MaterialCount;i++) {
-			if (mIndicesBuffer[i].capacity() > 0) {
+			if (aIndicesBuffer[i].capacity() > 0) {
 				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_AMBIENT, mMaterials.GetAmbient2(i));
 				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_DIFFUSE, mMaterials.GetDiffuse2(i));
 				GLES11.glMaterialfv(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SPECULAR, mMaterials.GetSpecular2(i));
 				GLES11.glMaterialf(GLES11.GL_FRONT_AND_BACK, GLES11.GL_SHININESS, mMaterials.GetShininess(i));
 				
-				GLES11.glDrawElements(GLES11.GL_TRIANGLES, mIndicesBuffer[i].capacity(),
-						GLES11.GL_UNSIGNED_SHORT, mIndicesBuffer[i]);
+				GLES11.glDrawElements(GLES11.GL_TRIANGLES, aIndicesBuffer[i].capacity(),
+						GLES11.GL_UNSIGNED_SHORT, aIndicesBuffer[i]);
 			}
 		}
 		

@@ -73,7 +73,7 @@ public class Camera {
 	private static final int CAM_FREE_PHI = 1;
 	private static final int CAM_FREE_CHI = 2;
 	
-	private static final float CLAMP_R_MIN = 10.0f;
+	private static final float CLAMP_R_MIN = 8.0f;
 	private static final float CLAMP_R_MAX = 30.0f;
 	private static final float CLAMP_CHI_MIN = (((float)Math.PI) / 8.0f);
 	private static final float CLAMP_CHI_MAX = (3.0f * (float)Math.PI / 8.0f);
